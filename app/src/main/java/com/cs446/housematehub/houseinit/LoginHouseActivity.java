@@ -1,10 +1,13 @@
-package com.cs446.housematehub;
+package com.cs446.housematehub.houseinit;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Spinner;
+
+import com.cs446.housematehub.LoggedInBaseActivity;
+import com.cs446.housematehub.R;
 
 public class LoginHouseActivity extends LoggedInBaseActivity {
 

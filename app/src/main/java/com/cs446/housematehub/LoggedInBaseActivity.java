@@ -10,6 +10,7 @@ import android.widget.Spinner;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.cs446.housematehub.userinit.LoginActivity;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;

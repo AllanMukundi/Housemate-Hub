@@ -13,13 +13,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".JoinHouseActivity"></activity>
-        <activity android:name=".CreateHouseActivity" />
-        <activity android:name=".LoginHouseActivity" />
+        <activity android:name=".houseinit.JoinHouseActivity"></activity>
+        <activity android:name=".houseinit.CreateHouseActivity" />
+        <activity android:name=".houseinit.LoginHouseActivity" />
         <activity android:name=".LoggedInBaseActivity" />
         <activity android:name=".HouseMainActivity" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".userinit.LoginActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,7 +27,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SignUpActivity" />
+        <activity android:name=".userinit.SignUpActivity" />
 
         <meta-data
             android:name="com.parse.SERVER_URL"

@@ -1,4 +1,4 @@
-package com.cs446.housematehub;
+package com.cs446.housematehub.houseinit;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,6 +9,9 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.cs446.housematehub.HouseMainActivity;
+import com.cs446.housematehub.LoggedInBaseActivity;
+import com.cs446.housematehub.R;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
