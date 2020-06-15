@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">Housemate Hub</string>
+    <string name="back4app_server_url">https://parseapi.back4app.com/</string>
+    <string name="back4app_app_id">LlopvxgeTubz36E2RloIlZyVBjVsUUWeM9w3pezm</string>
+    <string name="back4app_client_key">NuCOdVyXBrQneeR3oga5f8Mmk5QsnhRECWyc5Xw8</string>
+    <string-array name="menu_options">
+        <item>Log Out</item>
+    </string-array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
