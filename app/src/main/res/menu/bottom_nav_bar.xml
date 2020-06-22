@@ -1,0 +1,31 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="120px"
+    android:layout_width="match_parent">
+
+    <item
+        android:id="@+id/nav_expenses"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_attach_money_24"
+        android:title="@string/menu_label_expenses"/>
+    <item
+        android:id="@+id/nav_calendar"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_calendar_today_24"
+        android:title="@string/menu_label_calendar"/>
+    <item
+        android:id="@+id/nav_home"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_home_24"
+        android:title="@string/menu_label_home"/>
+    <item
+        android:id="@+id/nav_chat"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_chat_bubble_24"
+        android:title="@string/menu_label_chat"/>
+    <item
+        android:id="@+id/nav_lists"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_format_list_bulleted_24"
+        android:title="@string/menu_label_lists"/>
+
+</menu>
