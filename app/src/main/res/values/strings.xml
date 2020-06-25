@@ -9,4 +9,9 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="menu_label_expenses">Expenses</string>
+    <string name="menu_label_calendar">Calendar</string>
+    <string name="menu_label_home">Home</string>
+    <string name="menu_label_chat">Chat</string>
+    <string name="menu_label_lists">Lists</string>
 </resources>
