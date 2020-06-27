@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="16dp">
+
+    <ImageView
+        android:id="@+id/user_row_circle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/user_colored_circle" />
+
+    <TextView
+        android:id="@+id/user_row_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:text="Name"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="16dp" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <com.blackcat.currencyedittext.CurrencyEditText
+        android:id="@+id/user_row_amount"
+        android:layout_width="70dp"
+        android:layout_height="43dp"
+        android:layout_gravity="center_vertical"
+        android:ems="10"
+        android:paddingStart="16dp"
+        android:textSize="14sp" />
+</LinearLayout>

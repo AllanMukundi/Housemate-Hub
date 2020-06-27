@@ -15,22 +15,37 @@
         app:popupTheme="@style/AppTheme.PopupOverlay"
         tools:layout_editor_absoluteX="54dp">
 
-        <TextView
-            android:id="@+id/base_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Housemate Hub"
-            android:textColor="#FFFFFF"
-            android:textSize="24sp" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
 
-        <Spinner
-            android:id="@+id/menu"
-            android:layout_width="60dp"
-            android:layout_height="22dp"
-            android:layout_marginLeft="170dp"
-            android:entries="@array/menu_options" />
+            <TextView
+                android:id="@+id/base_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Housemate Hub"
+                android:textColor="#FFFFFF"
+                android:textSize="24sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Spinner
+                android:id="@+id/menu"
+                android:layout_width="60dp"
+                android:layout_height="22dp"
+                android:layout_marginStart="328dp"
+                android:entries="@array/menu_options"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.529" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     </androidx.appcompat.widget.Toolbar>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,6 +1,7 @@
 package com.cs446.housematehub.userinit;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -26,6 +27,7 @@ import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 
 import java.util.List;
+import java.util.Random;
 
 public class SignUpActivity extends AppCompatActivity implements Validator.ValidationListener {
 
@@ -79,6 +81,7 @@ public class SignUpActivity extends AppCompatActivity implements Validator.Valid
 
         user.setUsername(userText);
         user.setPassword(passwordText);
+        user.put("color", getRandomColor());
 
         userExists(user);
     }
@@ -132,4 +135,10 @@ public class SignUpActivity extends AppCompatActivity implements Validator.Valid
     public void backButton(View view) {
         finish();
     }
+
+    public int getRandomColor() {
+        Random rnd = new Random();
+        return Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
+    }
+
 }
