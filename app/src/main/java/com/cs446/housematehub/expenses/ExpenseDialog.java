@@ -52,6 +52,7 @@ public class ExpenseDialog extends DialogFragment implements AdapterView.OnItemS
     private ListView listView;
     private String payer;
     private HashMap<String, CurrencyEditText> expenseRecord = new HashMap<String, CurrencyEditText>();
+    private long[]  expenseRecordInit; // hacky workaround
 
     public ExpenseDialog() {
     }
@@ -74,6 +75,7 @@ public class ExpenseDialog extends DialogFragment implements AdapterView.OnItemS
 
         Button cancelButton = view.findViewById(R.id.cancel_button);
         Button createButton = view.findViewById(R.id.create_button);
+        Button splitButton = view.findViewById(R.id.split_evenly);
 
         expenseTitle = view.findViewById(R.id.expense_title);
         expenseAmount = view.findViewById(R.id.expense_amount);
@@ -101,6 +103,33 @@ public class ExpenseDialog extends DialogFragment implements AdapterView.OnItemS
                     Toast.makeText(getActivity(), "Division must equal the total amount", Toast.LENGTH_SHORT).show();
                 } else {
                     commitExpense();
+                }
+            }
+        });
+
+        splitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                long amounts[] = new long[users.size()];
+                expenseRecordInit = new long[users.size()];
+
+                long roundedDownAmount = expenseAmount.getRawValue() / users.size();
+                for (int i = 0; i < amounts.length; ++i) {
+                    amounts[i] = roundedDownAmount;
+                    expenseRecordInit[i] = roundedDownAmount;
+                }
+
+                long centsDifference = expenseAmount.getRawValue() - (roundedDownAmount * users.size());
+                int start = 0;
+                while (centsDifference > 0) {
+                    amounts[start] += 1;
+                    expenseRecordInit[start] += 1;
+                    start += 1;
+                    --centsDifference;
+                }
+                start = 0;
+                for (CurrencyEditText c : expenseRecord.values()) {
+                    c.setValue(amounts[start++]);
                 }
             }
         });
@@ -250,6 +279,10 @@ public class ExpenseDialog extends DialogFragment implements AdapterView.OnItemS
 
             GradientDrawable drawable = (GradientDrawable) circle.getDrawable();
             drawable.setColor((int) currUser.get("color"));
+
+            if (expenseRecordInit != null) {
+                amount.setValue(expenseRecordInit[position]); // Apparently getView isn't called unless the element is visible lol. Have to manually set invisible rows.
+            }
 
             expenseRecord.put(name.getText().toString(), amount);
 
