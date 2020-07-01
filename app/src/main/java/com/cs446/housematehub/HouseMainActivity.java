@@ -28,6 +28,7 @@ public class HouseMainActivity extends LoggedInBaseActivity {
     private TextView toolbarTitle;
     private Fragment expenseManagerFragment = new ExpenseManager();
     private Fragment groupListManagerFragment = new GroupListManager();
+
     BottomNavigationView.OnNavigationItemSelectedListener navListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
