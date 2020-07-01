@@ -12,6 +12,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.cs446.housematehub.expenses.ExpenseManager;
+import com.cs446.housematehub.grouplist.GroupListManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -26,6 +27,7 @@ public class HouseMainActivity extends LoggedInBaseActivity {
     private static ParseUser currentUser;
     private TextView toolbarTitle;
     private Fragment expenseManagerFragment = new ExpenseManager();
+    private Fragment groupListManagerFragment = new GroupListManager();
     BottomNavigationView.OnNavigationItemSelectedListener navListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -44,6 +46,7 @@ public class HouseMainActivity extends LoggedInBaseActivity {
                     setToolbarTitle("Chat");
                     break;
                 case R.id.nav_lists:
+                    loadFragment(groupListManagerFragment);
                     setToolbarTitle("Lists");
                     break;
             }
