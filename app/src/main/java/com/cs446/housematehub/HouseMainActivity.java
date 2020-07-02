@@ -34,7 +34,7 @@ public class HouseMainActivity extends LoggedInBaseActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.nav_expenses:
-                    loadFragment(expenseManagerFragment);
+                    loadFragment(expenseManagerFragment, "ExpenseManager");
                     setToolbarTitle("Expense Manager");
                     break;
                 case R.id.nav_calendar:
@@ -47,20 +47,22 @@ public class HouseMainActivity extends LoggedInBaseActivity {
                     setToolbarTitle("Chat");
                     break;
                 case R.id.nav_lists:
-                    loadFragment(groupListManagerFragment);
+                    loadFragment(groupListManagerFragment, "GroupListManager");
                     setToolbarTitle("Lists");
                     break;
             }
             return true;
         }
     };
-    private Spinner spinner;
     public String houseName;
 
-    public List<ParseObject> getHouseUsers() {
+    public List<ParseObject> getHouseUsers(boolean inclusive) {
         List<ParseObject> users = new ArrayList<ParseObject>();
         ParseQuery<ParseObject> query = ParseQuery.getQuery("_User");
         query.whereEqualTo("houseName", houseName);
+        if (!inclusive) {
+            query.whereNotEqualTo("username", currentUser.getUsername());
+        }
         try {
             users = query.find();
         } catch (ParseException e) {
@@ -77,7 +79,7 @@ public class HouseMainActivity extends LoggedInBaseActivity {
         View mainLayout = findViewById(R.id.include);
         toolbarTitle = mainLayout.findViewById(R.id.base_title);
 
-        spinner = findViewById(R.id.menu);
+        Spinner spinner = findViewById(R.id.menu);
         super.initSpinner(spinner);
         currentUser = ParseUser.getCurrentUser();
         houseName = currentUser.get("houseName").toString();
@@ -88,12 +90,12 @@ public class HouseMainActivity extends LoggedInBaseActivity {
         bottomNavigation.setOnNavigationItemSelectedListener(navListener);
     }
 
-    private void loadFragment(Fragment fragment) {
+    private void loadFragment(Fragment fragment, String tag) {
         FragmentManager fm = getSupportFragmentManager();
         fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         FragmentTransaction fragmentTransaction = fm.beginTransaction();
         fragmentTransaction.replace(R.id.house_main_layout, fragment);
-        fragmentTransaction.addToBackStack(fragment.toString());
+        fragmentTransaction.addToBackStack(tag);
         fragmentTransaction.commit(); // save the changes
     }
 

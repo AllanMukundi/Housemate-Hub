@@ -1,6 +1,7 @@
 package com.cs446.housematehub.expenses;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -20,6 +21,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.blackcat.currencyedittext.CurrencyEditText;
 import com.cs446.housematehub.HouseMainActivity;
@@ -45,14 +48,13 @@ import java.util.Map;
 
 public class ExpenseDialog extends DialogFragment implements AdapterView.OnItemSelectedListener {
 
-    List<ParseObject> users;
-    private Spinner spinner;
+    private List<ParseObject> users;
     private EditText expenseTitle;
     private CurrencyEditText expenseAmount;
-    private ListView listView;
     private String payer;
     private HashMap<String, CurrencyEditText> expenseRecord = new HashMap<String, CurrencyEditText>();
-    private long[]  expenseRecordInit; // hacky workaround
+    private long[] expenseRecordInit; // hacky workaround
+    private DialogInterface.OnDismissListener onDismissListener;
 
     public ExpenseDialog() {
     }
@@ -80,8 +82,8 @@ public class ExpenseDialog extends DialogFragment implements AdapterView.OnItemS
         expenseTitle = view.findViewById(R.id.expense_title);
         expenseAmount = view.findViewById(R.id.expense_amount);
 
-        listView = view.findViewById(R.id.user_list);
-        users = ((HouseMainActivity) getActivity()).getHouseUsers();
+        ListView listView = view.findViewById(R.id.user_list);
+        users = ((HouseMainActivity) getActivity()).getHouseUsers(true);
         UserAdapter userAdapter = new UserAdapter(getContext(), new ArrayList<ParseObject>(users), expenseRecord);
         listView.setAdapter(userAdapter);
 
@@ -110,7 +112,7 @@ public class ExpenseDialog extends DialogFragment implements AdapterView.OnItemS
         splitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                long amounts[] = new long[users.size()];
+                long[] amounts = new long[users.size()];
                 expenseRecordInit = new long[users.size()];
 
                 long roundedDownAmount = expenseAmount.getRawValue() / users.size();
@@ -139,8 +141,20 @@ public class ExpenseDialog extends DialogFragment implements AdapterView.OnItemS
         return view;
     }
 
-    public void initSpinner(View view) {
-        spinner = view.findViewById(R.id.user_spinner);
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
+        if (onDismissListener != null) {
+            onDismissListener.onDismiss(dialog);
+        }
+    }
+
+    public void setOnDismissListener(DialogInterface.OnDismissListener onDismissListener) {
+        this.onDismissListener = onDismissListener;
+    }
+
+    private void initSpinner(View view) {
+        Spinner spinner = view.findViewById(R.id.user_spinner);
         spinner.setOnItemSelectedListener(this);
         List<String> user_names = new ArrayList<String>();
 
@@ -161,7 +175,7 @@ public class ExpenseDialog extends DialogFragment implements AdapterView.OnItemS
     public void onNothingSelected(AdapterView<?> arg0) {
     }
 
-    public boolean equalsTotal(long expenseAmount) {
+    private boolean equalsTotal(long expenseAmount) {
         if (expenseRecord.isEmpty()) {
             return false;
         }
@@ -172,7 +186,7 @@ public class ExpenseDialog extends DialogFragment implements AdapterView.OnItemS
         return total == expenseAmount;
     }
 
-    public void commitExpense() {
+    private void commitExpense() {
         List<ParseObject> houseRes = new ArrayList<ParseObject>();
         ParseObject house;
         ParseQuery<ParseObject> query = ParseQuery.getQuery("House");
@@ -241,6 +255,8 @@ public class ExpenseDialog extends DialogFragment implements AdapterView.OnItemS
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+        } else {
+            dismiss();
         }
     }
 
@@ -248,13 +264,9 @@ public class ExpenseDialog extends DialogFragment implements AdapterView.OnItemS
 
         private Context mContext;
         private List<ParseObject> users;
-
-        private ImageView circle;
-        private TextView name;
-        private CurrencyEditText amount;
         private HashMap<String, CurrencyEditText> expenseRecord;
 
-        public UserAdapter(@NonNull Context context, ArrayList<ParseObject> users, HashMap<String, CurrencyEditText> expenseRecord) {
+        private UserAdapter(@NonNull Context context, ArrayList<ParseObject> users, HashMap<String, CurrencyEditText> expenseRecord) {
             super(context, R.layout.expense_manager_user_row, users);
             this.mContext = context;
             this.users = users;
@@ -271,9 +283,9 @@ public class ExpenseDialog extends DialogFragment implements AdapterView.OnItemS
 
             ParseObject currUser = users.get(position);
 
-            circle = user_row.findViewById(R.id.user_row_circle);
-            name = user_row.findViewById(R.id.user_row_name);
-            amount = user_row.findViewById(R.id.user_row_amount);
+            ImageView circle = user_row.findViewById(R.id.user_row_circle);
+            TextView name = user_row.findViewById(R.id.user_row_name);
+            CurrencyEditText amount = user_row.findViewById(R.id.user_row_amount);
 
             name.setText(currUser.get("username").toString());
 

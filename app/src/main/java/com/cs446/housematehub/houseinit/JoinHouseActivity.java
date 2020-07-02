@@ -32,19 +32,7 @@ public class JoinHouseActivity extends LoggedInBaseActivity {
     private Button joinButton;
 
     // taken from https://stackoverflow.com/questions/33055860/method-to-cast-object-to-jsonobject-or-jsonarray-depending-on-the-object0k
-    public static JSONArray objectToJSONArray(Object object) {
-        Object json = null;
-        JSONArray jsonArray = null;
-        try {
-            json = new JSONTokener(object.toString()).nextValue();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        if (json instanceof JSONArray) {
-            jsonArray = (JSONArray) json;
-        }
-        return jsonArray;
-    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
