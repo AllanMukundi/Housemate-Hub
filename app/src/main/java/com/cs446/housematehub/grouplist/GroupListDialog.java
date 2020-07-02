@@ -1,5 +1,6 @@
 package com.cs446.housematehub.grouplist;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,13 +28,31 @@ public class GroupListDialog extends DialogFragment {
     private EditText listTitle;
     private EditText listDescription;
     private CheckBox listSubscribe;
+    private DialogInterface.OnDismissListener onDismissListener;
+
 
     public GroupListDialog() {
+    }
+
+    public interface GroupListDialogInterface{
+        public void refreshList();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
+        if (onDismissListener != null) {
+            onDismissListener.onDismiss(dialog);
+        }
+    }
+
+    public void setOnDismissListener(DialogInterface.OnDismissListener onDismissListener) {
+        this.onDismissListener = onDismissListener;
     }
 
     @Override
@@ -49,9 +68,9 @@ public class GroupListDialog extends DialogFragment {
 
         Button cancelButton = view.findViewById(R.id.cancel_button);
         Button createButton = view.findViewById(R.id.create_button);
-        listSubscribe = (CheckBox) view.findViewById(R.id.list_subscription);
-        listTitle = view.findViewById(R.id.list_title);
-        listDescription = view.findViewById(R.id.list_description);
+        listSubscribe = (CheckBox) view.findViewById(R.id.list_subscription_input);
+        listTitle = view.findViewById(R.id.list_title_input);
+        listDescription = view.findViewById(R.id.list_description_input);
 
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
