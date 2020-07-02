@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.cs446.housematehub.calendar.CalendarManager;
 import com.cs446.housematehub.expenses.ExpenseManager;
 import com.cs446.housematehub.grouplist.GroupListManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -28,6 +29,7 @@ public class HouseMainActivity extends LoggedInBaseActivity {
     private TextView toolbarTitle;
     private Fragment expenseManagerFragment = new ExpenseManager();
     private Fragment groupListManagerFragment = new GroupListManager();
+    private Fragment calendarManagerFragment = new GroupListManager();
 
     BottomNavigationView.OnNavigationItemSelectedListener navListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
@@ -38,6 +40,7 @@ public class HouseMainActivity extends LoggedInBaseActivity {
                     setToolbarTitle("Expense Manager");
                     break;
                 case R.id.nav_calendar:
+                    loadFragment(calendarManagerFragment);
                     setToolbarTitle("Calendar");
                     break;
                 case R.id.nav_home:
