@@ -10,6 +10,8 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import androidx.fragment.app.DialogFragment;
+
 import com.cs446.housematehub.HouseMainActivity;
 import com.cs446.housematehub.R;
 import com.parse.ParseException;
@@ -19,8 +21,6 @@ import com.parse.SaveCallback;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.fragment.app.DialogFragment;
 
 public class GroupListDialog extends DialogFragment {
 
@@ -78,7 +78,7 @@ public class GroupListDialog extends DialogFragment {
         List<ParseObject> houseRes = new ArrayList<ParseObject>();
         ParseObject house;
         ParseQuery<ParseObject> query = ParseQuery.getQuery("House");
-        final String houseName = ((HouseMainActivity) getActivity()).houseName;
+        final String houseName = (String) ((HouseMainActivity) getActivity()).getCurrentHouse().get("houseName");
         query.whereEqualTo("houseName", houseName);
 
         try {

@@ -3,4 +3,9 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+
+    <dimen name="account_details_title_text_size">25sp</dimen>
+    <dimen name="account_details_row_text_size">17sp</dimen>
+    <dimen name="account_details_row_margin_top">30dp</dimen>
+    <dimen name="account_details_row_margin_side">20dp</dimen>
 </resources>

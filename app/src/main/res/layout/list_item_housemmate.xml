@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:padding="@dimen/account_details_row_margin_side"
+    android:clickable="true"
+    android:focusable="true"
+    tools:ignore="UseCompoundDrawables">
+
+    <ImageView
+        android:id="@+id/housemate_circle_row_item"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/account_details_row_margin_side"
+        app:srcCompat="@drawable/user_colored_circle_40" />
+
+    <TextView
+        android:id="@+id/housemate_name_row_item"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/account_details_row_text_size"
+        android:textColor="@color/black"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="@dimen/account_details_row_margin_side"
+        tools:text="Amber"/>
+
+</LinearLayout>

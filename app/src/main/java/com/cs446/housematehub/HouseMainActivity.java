@@ -7,10 +7,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.cs446.housematehub.account.AccountDetails;
 import com.cs446.housematehub.expenses.ExpenseManager;
 import com.cs446.housematehub.grouplist.GroupListManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -24,7 +26,8 @@ import java.util.List;
 
 public class HouseMainActivity extends LoggedInBaseActivity {
 
-    private static ParseUser currentUser;
+    private ParseUser currentUser;
+    private ParseObject currentHouse;
     private TextView toolbarTitle;
     private Fragment expenseManagerFragment = new ExpenseManager();
     private Fragment groupListManagerFragment = new GroupListManager();
@@ -54,12 +57,11 @@ public class HouseMainActivity extends LoggedInBaseActivity {
             return true;
         }
     };
-    public String houseName;
 
     public List<ParseObject> getHouseUsers(boolean inclusive) {
         List<ParseObject> users = new ArrayList<ParseObject>();
         ParseQuery<ParseObject> query = ParseQuery.getQuery("_User");
-        query.whereEqualTo("houseName", houseName);
+        query.whereEqualTo("houseName", currentHouse.get("houseName"));
         if (!inclusive) {
             query.whereNotEqualTo("username", currentUser.getUsername());
         }
@@ -82,12 +84,31 @@ public class HouseMainActivity extends LoggedInBaseActivity {
         Spinner spinner = findViewById(R.id.menu);
         super.initSpinner(spinner);
         currentUser = ParseUser.getCurrentUser();
-        houseName = currentUser.get("houseName").toString();
+        String houseName = currentUser.get("houseName").toString();
+        currentHouse = getCurrentHouse(houseName);
 
         BottomNavigationView bottomNavigation = findViewById(R.id.navigationView);
         bottomNavigation.bringToFront();
         bottomNavigation.setSelectedItemId(R.id.nav_home);
         bottomNavigation.setOnNavigationItemSelectedListener(navListener);
+    }
+
+    public ParseObject getCurrentHouse() {
+        return currentHouse;
+    }
+
+    @Nullable
+    private ParseObject getCurrentHouse(String houseName) {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("House");
+        query.whereEqualTo("houseName", houseName);
+        try {
+            List<ParseObject> response = query.find();
+            ParseObject house = response.get(0);
+            return house;
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     private void loadFragment(Fragment fragment, String tag) {
