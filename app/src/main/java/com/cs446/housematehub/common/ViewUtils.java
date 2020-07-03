@@ -1,4 +1,4 @@
-package com.cs446.housematehub.utils;
+package com.cs446.housematehub.common;
 
 import android.view.View;
 import android.view.ViewGroup;

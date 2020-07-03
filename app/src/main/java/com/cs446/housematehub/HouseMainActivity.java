@@ -37,7 +37,7 @@ public class HouseMainActivity extends LoggedInBaseActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.nav_expenses:
-                    loadFragment(expenseManagerFragment, "ExpenseManager");
+                    loadFragment(expenseManagerFragment, "ExpenseManager", true);
                     setToolbarTitle("Expense Manager");
                     break;
                 case R.id.nav_calendar:
@@ -45,12 +45,13 @@ public class HouseMainActivity extends LoggedInBaseActivity {
                     break;
                 case R.id.nav_home:
                     setToolbarTitle("Housemate Hub");
+                    loadFragment(AccountDetails.newInstance(currentUser.getUsername()), "account_details_fragment", true);
                     break;
                 case R.id.nav_chat:
                     setToolbarTitle("Chat");
                     break;
                 case R.id.nav_lists:
-                    loadFragment(groupListManagerFragment, "GroupListManager");
+                    loadFragment(groupListManagerFragment, "GroupListManager", true);
                     setToolbarTitle("Lists");
                     break;
             }
@@ -111,9 +112,11 @@ public class HouseMainActivity extends LoggedInBaseActivity {
         }
     }
 
-    private void loadFragment(Fragment fragment, String tag) {
+    public void loadFragment(Fragment fragment, String tag, boolean popBackstack) {
         FragmentManager fm = getSupportFragmentManager();
-        fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        if (popBackstack) {
+            fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        }
         FragmentTransaction fragmentTransaction = fm.beginTransaction();
         fragmentTransaction.replace(R.id.house_main_layout, fragment);
         fragmentTransaction.addToBackStack(tag);

@@ -43,6 +43,10 @@ public class HousematesListAdapter extends RecyclerView.Adapter<HousematesListAd
         return mHousemates.size();
     }
 
+    public List<ParseUser> getData() {
+        return mHousemates;
+    }
+
     public static class HousemmatesViewHolder extends RecyclerView.ViewHolder {
 
         private ImageView mHousemateCircle;

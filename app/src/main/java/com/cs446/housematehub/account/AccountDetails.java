@@ -25,7 +25,8 @@ import com.cs446.housematehub.HouseMainActivity;
 import com.cs446.housematehub.HousematesListAdapter;
 import com.cs446.housematehub.LoggedInBaseActivity;
 import com.cs446.housematehub.R;
-import com.cs446.housematehub.utils.ViewUtils;
+import com.cs446.housematehub.common.RecyclerItemClickListener;
+import com.cs446.housematehub.common.ViewUtils;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -88,6 +89,11 @@ public class AccountDetails extends Fragment {
         ((GradientDrawable) mCircle.getDrawable()).setColor((int) mUser.get("color"));
         setContentVisibility(true);
         mHousematesRecyclerView.setVisibility(View.GONE);
+
+        if (!isCurrentUser()) {
+            mLogOutTextView.setVisibility(View.GONE);
+            mDoNotDisturbSwitch.setEnabled(false);
+        }
     }
 
     private void updateData(String userName) {
@@ -136,6 +142,21 @@ public class AccountDetails extends Fragment {
         ViewGroup.LayoutParams params = mHousematesRecyclerView.getLayoutParams();
         params.height = 225 * mAdapter.getItemCount();
         mHousematesRecyclerView.setLayoutParams(params);
+        mHousematesRecyclerView.addOnItemTouchListener(
+                new RecyclerItemClickListener(getContext(), mHousematesRecyclerView, new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        ParseUser user = mAdapter.getData().get(position);
+                        Fragment newAccountDetailsFragment = AccountDetails.newInstance(user.getUsername());
+                        ((HouseMainActivity) getActivity()).loadFragment(newAccountDetailsFragment, "account_fragment_tag_" + user.getUsername(), false);
+                    }
+
+                    @Override
+                    public void onLongItemClick(View view, int position) {
+                    }
+                })
+        );
+
         mArrowButton = rootView.findViewById(R.id.arrow_button);
         View.OnClickListener expandHousematesClickListener = new View.OnClickListener() {
             @Override
@@ -160,6 +181,10 @@ public class AccountDetails extends Fragment {
                 ((LoggedInBaseActivity) getActivity()).logOut();
             }
         });
+    }
+
+    private boolean isCurrentUser() {
+        return mUser.getUsername().equals(ParseUser.getCurrentUser().getUsername());
     }
 
     private void setContentVisibility(boolean show) {
