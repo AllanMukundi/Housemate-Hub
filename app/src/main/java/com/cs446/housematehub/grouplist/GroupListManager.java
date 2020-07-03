@@ -83,11 +83,6 @@ public class GroupListManager extends Fragment implements GroupListAdapter.Group
         listData.clear();
         getGroupList();
         listData.addAll(groupListResult);
-        try {
-            TimeUnit.MICROSECONDS.sleep(500);
-        } catch (InterruptedException ie) {
-            Thread.currentThread().interrupt();
-        }
         if (listAdapter != null) {
             listAdapter.notifyDataSetChanged();
         }

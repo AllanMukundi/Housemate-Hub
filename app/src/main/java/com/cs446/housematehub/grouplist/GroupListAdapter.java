@@ -9,10 +9,12 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.cs446.housematehub.R;
+import com.parse.DeleteCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.SaveCallback;
 
 import java.util.List;
 
@@ -96,9 +98,14 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.Grou
         query.getInBackground(objectId, new GetCallback<ParseObject>() {
             public void done(ParseObject entity, ParseException e) {
                 if (e == null) {
-                    entity.deleteInBackground();
-
-                    groupListListener.refreshList();
+                    entity.deleteInBackground(new DeleteCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            if (e == null) {
+                                groupListListener.refreshList();
+                            }
+                        }
+                    });
                 }
             }
         });
@@ -112,7 +119,14 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.Grou
                 if (e == null) {
                     entity.put("groupListSubscription", listSubscription);
 
-                    entity.saveInBackground();
+                    entity.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            if (e == null) {
+                                groupListListener.refreshList();
+                            }
+                        }
+                    });
                     groupListListener.refreshList();
                 }
             }
