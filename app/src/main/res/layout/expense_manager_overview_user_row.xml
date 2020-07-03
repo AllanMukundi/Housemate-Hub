@@ -7,13 +7,13 @@
     android:padding="16dp">
 
     <ImageView
-        android:id="@+id/user_row_circle"
+        android:id="@+id/overview_user_row_circle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/user_colored_circle_40" />
 
     <TextView
-        android:id="@+id/user_row_name"
+        android:id="@+id/overview_user_row_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
@@ -27,12 +27,25 @@
         android:layout_weight="1" />
 
     <com.blackcat.currencyedittext.CurrencyEditText
-        android:id="@+id/user_row_amount"
+        android:id="@+id/overview_user_row_amount"
         android:layout_width="wrap_content"
-        android:layout_height="43dp"
-        android:gravity="center_vertical|right"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
         android:background="#00FFFFFF"
-        android:ems="10"
-        android:paddingStart="16dp"
+        android:clickable="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:inputType="none"
+        android:linksClickable="false"
+        android:longClickable="false"
+        android:text="$0.00"
+        android:textColor="#666666"
         android:textSize="14sp" />
+
+    <ImageView
+        android:id="@+id/overview_user_see_more_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        app:srcCompat="@drawable/ic_chevron_right_grey_24dp" />
 </LinearLayout>

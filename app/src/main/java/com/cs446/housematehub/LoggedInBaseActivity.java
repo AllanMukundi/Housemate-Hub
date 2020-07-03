@@ -15,6 +15,10 @@ import androidx.appcompat.widget.Toolbar;
 import com.cs446.housematehub.userinit.LoginActivity;
 import com.parse.ParseUser;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONTokener;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,5 +56,19 @@ public abstract class LoggedInBaseActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> adapterView) {
             }
         });
+    }
+
+    public static JSONArray objectToJSONArray(Object object) {
+        Object json = null;
+        JSONArray jsonArray = null;
+        try {
+            json = new JSONTokener(object.toString()).nextValue();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        if (json instanceof JSONArray) {
+            jsonArray = (JSONArray) json;
+        }
+        return jsonArray;
     }
 }
