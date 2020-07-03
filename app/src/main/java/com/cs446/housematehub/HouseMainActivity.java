@@ -45,7 +45,6 @@ public class HouseMainActivity extends LoggedInBaseActivity {
                     break;
                 case R.id.nav_home:
                     setToolbarTitle("Housemate Hub");
-                    loadFragment(AccountDetails.newInstance(currentUser.getUsername()), "account_details_fragment", true);
                     break;
                 case R.id.nav_chat:
                     setToolbarTitle("Chat");

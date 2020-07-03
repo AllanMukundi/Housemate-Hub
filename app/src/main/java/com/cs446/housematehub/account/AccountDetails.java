@@ -8,11 +8,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -77,23 +79,6 @@ public class AccountDetails extends Fragment {
         updateData(userName);
         initialiseViews(view);
         updateUI();
-    }
-
-    private void updateUI() {
-        mUserNameTextView.setText(mUser.getUsername());
-        mNameTitleTextView.setText(mUser.getUsername());
-        mNameRowTextView.setText(mUser.getUsername());
-        mEmailTextView.setText(mUser.getEmail());
-        mGroupNameTextView.setText((String) mHouse.get("houseName"));
-        mGroupCodeTextView.setText((String) mHouse.get("houseCode"));
-        ((GradientDrawable) mCircle.getDrawable()).setColor((int) mUser.get("color"));
-        setContentVisibility(true);
-        mHousematesRecyclerView.setVisibility(View.GONE);
-
-        if (!isCurrentUser()) {
-            mLogOutTextView.setVisibility(View.GONE);
-            mDoNotDisturbSwitch.setEnabled(false);
-        }
     }
 
     private void updateData(String userName) {
@@ -181,6 +166,33 @@ public class AccountDetails extends Fragment {
                 ((LoggedInBaseActivity) getActivity()).logOut();
             }
         });
+
+        boolean doNotDisturb = mUser.getBoolean("do_not_disturb");
+        mDoNotDisturbSwitch.setChecked(doNotDisturb);
+        mDoNotDisturbSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                mUser.put("do_not_disturb", isChecked);
+                mUser.saveInBackground();
+                Toast.makeText(getContext(), "Do not disturb is turned " + (isChecked ? "on" : "off"), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void updateUI() {
+        mUserNameTextView.setText(mUser.getUsername());
+        mNameTitleTextView.setText(mUser.getUsername());
+        mNameRowTextView.setText(mUser.getUsername());
+        mEmailTextView.setText(mUser.getEmail());
+        mGroupNameTextView.setText((String) mHouse.get("houseName"));
+        mGroupCodeTextView.setText((String) mHouse.get("houseCode"));
+        ((GradientDrawable) mCircle.getDrawable()).setColor((int) mUser.get("color"));
+        setContentVisibility(true);
+        mHousematesRecyclerView.setVisibility(View.GONE);
+
+        if (!isCurrentUser()) {
+            mLogOutTextView.setVisibility(View.GONE);
+            mDoNotDisturbSwitch.setEnabled(false);
+        }
     }
 
     private boolean isCurrentUser() {
