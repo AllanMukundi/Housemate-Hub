@@ -29,7 +29,7 @@ public class HouseMainActivity extends LoggedInBaseActivity {
     private TextView toolbarTitle;
     private Fragment expenseManagerFragment = new ExpenseManager();
     private Fragment groupListManagerFragment = new GroupListManager();
-    private Fragment calendarManagerFragment = new GroupListManager();
+    private Fragment calendarManagerFragment = new CalendarManager();
 
     BottomNavigationView.OnNavigationItemSelectedListener navListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
@@ -40,7 +40,7 @@ public class HouseMainActivity extends LoggedInBaseActivity {
                     setToolbarTitle("Expense Manager");
                     break;
                 case R.id.nav_calendar:
-                    loadFragment(calendarManagerFragment);
+                    loadFragment(calendarManagerFragment, "CalendarManager");
                     setToolbarTitle("Calendar");
                     break;
                 case R.id.nav_home:
@@ -72,6 +72,10 @@ public class HouseMainActivity extends LoggedInBaseActivity {
             e.printStackTrace();
         }
         return users;
+    }
+
+    public ParseUser getCurrentUser() {
+        return currentUser;
     }
 
     @Override

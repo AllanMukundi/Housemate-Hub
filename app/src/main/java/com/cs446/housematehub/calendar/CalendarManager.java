@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.cs446.housematehub.R;
-import com.cs446.housematehub.expenses.ExpenseDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import androidx.fragment.app.Fragment;
@@ -29,13 +28,13 @@ public class CalendarManager extends Fragment {
         view = inflater.inflate(R.layout.fragment_calendar_manager, container, false);
         addEventButton = view.findViewById(R.id.addButton);
 
-//        addEventButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                ExpenseDialog dialog = new ExpenseDialog();
-//                dialog.show(getFragmentManager(), "ExpenseDialog");
-//            }
-//        });
+        addEventButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CalendarDialog dialog = new CalendarDialog();
+                dialog.show(getFragmentManager(), "CalendarDialog");
+            }
+        });
         return view;
     }
 }
