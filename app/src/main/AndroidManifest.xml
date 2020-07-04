@@ -17,7 +17,8 @@
         <activity android:name=".houseinit.CreateHouseActivity" />
         <activity android:name=".houseinit.LoginHouseActivity" />
         <activity android:name=".LoggedInBaseActivity" />
-        <activity android:name=".HouseMainActivity" />
+        <activity android:name=".HouseMainActivity"
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".userinit.LoginActivity"
             android:theme="@style/AppTheme.NoActionBar">
