@@ -118,7 +118,6 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.Grou
             public void done(ParseObject entity, ParseException e) {
                 if (e == null) {
                     entity.put("groupListSubscription", listSubscription);
-
                     entity.saveInBackground(new SaveCallback() {
                         @Override
                         public void done(ParseException e) {
