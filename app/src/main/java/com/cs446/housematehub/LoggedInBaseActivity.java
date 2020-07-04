@@ -2,12 +2,11 @@ package com.cs446.housematehub;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -45,10 +44,7 @@ public abstract class LoggedInBaseActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selectedItem = parent.getItemAtPosition(position).toString();
                 if (selectedItem == "Log out") {
-                    ParseUser.logOut();
-                    Intent intent = new Intent(LoggedInBaseActivity.this, LoginActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
+                    logOut();
                 }
             }
 
@@ -56,6 +52,14 @@ public abstract class LoggedInBaseActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> adapterView) {
             }
         });
+    }
+
+    public void logOut() {
+        ParseUser.logOut();
+        Intent intent = new Intent(LoggedInBaseActivity.this, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        Toast.makeText(this, R.string.log_out_successful, Toast.LENGTH_SHORT).show();
+        startActivity(intent);
     }
 
     public static JSONArray objectToJSONArray(Object object) {

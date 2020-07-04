@@ -21,8 +21,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.blackcat.currencyedittext.CurrencyEditText;
 import com.cs446.housematehub.HouseMainActivity;
@@ -190,7 +188,7 @@ public class ExpenseDialog extends DialogFragment implements AdapterView.OnItemS
         List<ParseObject> houseRes = new ArrayList<ParseObject>();
         ParseObject house;
         ParseQuery<ParseObject> query = ParseQuery.getQuery("House");
-        final String houseName = ((HouseMainActivity) getActivity()).houseName;
+        final String houseName = (String) ((HouseMainActivity) getActivity()).getCurrentHouse().get("houseName");
         query.whereEqualTo("houseName", houseName);
 
         try {
