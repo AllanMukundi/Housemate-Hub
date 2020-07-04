@@ -103,7 +103,7 @@ public class ExpenseManager extends Fragment {
     public void updateExpenseRecord() {
         List<ParseObject> expenseRes = new ArrayList<ParseObject>();
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Expense");
-        final String houseName = ((HouseMainActivity) getActivity()).houseName;
+        final String houseName = (String) ((HouseMainActivity) getActivity()).getCurrentHouse().get("houseName");
         query.whereEqualTo("houseName", houseName);
 
         try {

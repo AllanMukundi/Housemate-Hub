@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="40dp"
+    android:fillViewport="true"
+    android:scrollbars="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/user_circle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/account_details_row_margin_side"
+            app:srcCompat="@drawable/user_colored_circle_40" />
+
+        <TextView
+            android:id="@+id/name_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="@dimen/account_details_title_text_size"
+            tools:text="Alex G"></TextView>
+
+        <TextView
+            android:id="@+id/email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="alex@gmail.com"></TextView>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="@dimen/account_details_row_margin_side"
+                android:text="@string/name"
+                android:textColor="@color/black"
+                android:textSize="@dimen/account_details_row_text_size"></TextView>
+
+            <TextView
+                android:id="@+id/name_row"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="@dimen/account_details_row_margin_side"
+                android:textSize="@dimen/account_details_row_text_size"
+                tools:text="Alex"></TextView>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/account_details_row_margin_top">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="@dimen/account_details_row_margin_side"
+                android:text="@string/username"
+                android:textColor="@color/black"
+                android:textSize="@dimen/account_details_row_text_size"
+                tools:text="Username"></TextView>
+
+            <TextView
+                android:id="@+id/username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="@dimen/account_details_row_margin_side"
+                android:textSize="@dimen/account_details_row_text_size"
+                tools:text="alex01"></TextView>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/account_details_row_margin_top">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="@dimen/account_details_row_margin_side"
+                android:text="@string/do_not_disturb"
+                android:textColor="@color/black"
+                android:textSize="@dimen/account_details_row_text_size"
+                tools:ignore="RelativeOverlap"></TextView>
+
+            <Switch
+                android:id="@+id/do_not_disturb_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="@dimen/account_details_row_margin_side"
+                android:textSize="@dimen/account_details_row_text_size"></Switch>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/account_details_row_margin_top">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="@dimen/account_details_row_margin_side"
+                android:text="@string/group_name"
+                android:textColor="@color/black"
+                android:textSize="@dimen/account_details_row_text_size"></TextView>
+
+            <TextView
+                android:id="@+id/group_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="@dimen/account_details_row_margin_side"
+                android:textSize="@dimen/account_details_row_text_size"
+                tools:text="Icon T1808"></TextView>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/account_details_row_margin_top">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="@dimen/account_details_row_margin_side"
+                android:text="@string/group_code"
+                android:textColor="@color/black"
+                android:textSize="@dimen/account_details_row_text_size"></TextView>
+
+            <TextView
+                android:id="@+id/group_code"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="@dimen/account_details_row_margin_side"
+                android:textSize="@dimen/account_details_row_text_size"
+                tools:text="39W5-6G34-2D48"></TextView>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/housemates_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/account_details_row_margin_top">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="@dimen/account_details_row_margin_side"
+                android:text="@string/housemates"
+                android:textColor="@color/black"
+                android:textSize="@dimen/account_details_row_text_size"></TextView>
+
+            <Button
+                android:id="@+id/arrow_button"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="@dimen/account_details_row_margin_side"
+                android:background="@drawable/ic_keyboard_arrow_down_black_24dp" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/housemates_list_recyclerview"
+                style="@style/AccountDetailsHousematesRecyclerView"></androidx.recyclerview.widget.RecyclerView>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/account_details_row_margin_top"
+            android:layout_marginBottom="@dimen/account_details_row_margin_top"
+            android:clickable="true"
+            android:paddingBottom="@dimen/account_details_row_margin_top">
+
+            <TextView
+                android:id="@+id/log_out"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="@dimen/account_details_row_margin_side"
+                android:clickable="true"
+                android:text="@string/log_out"
+                android:textColor="@color/colorDebtRed"
+                android:textSize="@dimen/account_details_row_text_size"></TextView>
+
+        </RelativeLayout>
+
+        <ProgressBar
+            android:id="@+id/progress_spinner"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center" />
+
+    </LinearLayout>
+
+</ScrollView>
+
