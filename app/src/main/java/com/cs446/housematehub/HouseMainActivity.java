@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.cs446.housematehub.calendar.CalendarManager;
 import com.cs446.housematehub.account.AccountDetails;
 import com.cs446.housematehub.expenses.ExpenseManager;
 import com.cs446.housematehub.grouplist.GroupListManager;
@@ -31,6 +32,7 @@ public class HouseMainActivity extends LoggedInBaseActivity {
     private TextView toolbarTitle;
     private Fragment expenseManagerFragment = new ExpenseManager();
     private Fragment groupListManagerFragment = new GroupListManager();
+    private Fragment calendarManagerFragment = new CalendarManager();
 
     BottomNavigationView.OnNavigationItemSelectedListener navListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
@@ -41,6 +43,7 @@ public class HouseMainActivity extends LoggedInBaseActivity {
                     setToolbarTitle("Expense Manager");
                     break;
                 case R.id.nav_calendar:
+                    loadFragment(calendarManagerFragment, "CalendarManager");
                     setToolbarTitle("Calendar");
                     break;
                 case R.id.nav_home:
@@ -71,6 +74,10 @@ public class HouseMainActivity extends LoggedInBaseActivity {
             e.printStackTrace();
         }
         return users;
+    }
+
+    public ParseUser getCurrentUser() {
+        return currentUser;
     }
 
     @Override
