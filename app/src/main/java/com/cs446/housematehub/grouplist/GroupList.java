@@ -18,12 +18,10 @@ public class GroupList {
     }
 
     public static class GroupListItem {
-        public String id;
         public String title;
         public boolean isDone;
 
-        public GroupListItem(String id, String title, boolean isDone) {
-            this.id = id;
+        public GroupListItem(String title, boolean isDone) {
             this.title = title;
             this.isDone = isDone;
         }

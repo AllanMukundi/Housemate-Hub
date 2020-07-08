@@ -135,7 +135,7 @@ public class GroupListItemManager extends Fragment implements GroupListItemAdapt
     }
 
     public void addGroupListItem() {
-        GroupList.GroupListItem listItem = new GroupList.GroupListItem("1", listItemTitle.getText().toString(), false);
+        GroupList.GroupListItem listItem = new GroupList.GroupListItem(listItemTitle.getText().toString(), false);
         listData.add(listItem);
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery("GroupList");;
