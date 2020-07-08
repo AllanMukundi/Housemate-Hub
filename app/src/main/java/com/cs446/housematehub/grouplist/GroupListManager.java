@@ -5,22 +5,14 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListAdapter;
 
 import com.cs446.housematehub.HouseMainActivity;
 import com.cs446.housematehub.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
-import com.parse.SaveCallback;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -37,12 +29,16 @@ public class GroupListManager extends Fragment implements GroupListAdapter.Group
     private RecyclerView.Adapter listAdapter;
     private RecyclerView.LayoutManager listLayoutManager;
 
+    private HouseMainActivity mainActivity;
+    private String houseName;
 
     public GroupListManager() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mainActivity = ((HouseMainActivity) getActivity());
+        houseName = (String) mainActivity.getCurrentHouse().get("houseName");
         getGroupList();
     }
 
@@ -51,6 +47,9 @@ public class GroupListManager extends Fragment implements GroupListAdapter.Group
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_group_list_manager, container, false);
         addGroupListButton = view.findViewById(R.id.addButton);
+
+        mainActivity.setToolbarTitle("Lists");
+        mainActivity.disableBack();
 
         listRecyclerView = (RecyclerView) view.findViewById(R.id.listRecyclerView);
         listRecyclerView.setHasFixedSize(true);
@@ -83,19 +82,12 @@ public class GroupListManager extends Fragment implements GroupListAdapter.Group
         listData.clear();
         getGroupList();
         listData.addAll(groupListResult);
-        try {
-            TimeUnit.MICROSECONDS.sleep(500);
-        } catch (InterruptedException ie) {
-            Thread.currentThread().interrupt();
-        }
         if (listAdapter != null) {
             listAdapter.notifyDataSetChanged();
         }
     }
 
     public void getGroupList() {
-        final String houseName = ((HouseMainActivity) getActivity()).houseName;
-
         ParseQuery<ParseObject> query = ParseQuery.getQuery("GroupList");
         query.whereEqualTo("houseName", houseName);
 

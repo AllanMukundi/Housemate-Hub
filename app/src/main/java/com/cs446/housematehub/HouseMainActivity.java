@@ -3,11 +3,13 @@ package com.cs446.housematehub;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -30,6 +32,7 @@ public class HouseMainActivity extends LoggedInBaseActivity {
     private ParseUser currentUser;
     private ParseObject currentHouse;
     private TextView toolbarTitle;
+    private ImageButton backButton;
     private Fragment expenseManagerFragment = new ExpenseManager();
     private Fragment groupListManagerFragment = new GroupListManager();
     private Fragment calendarManagerFragment = new CalendarManager();
@@ -43,7 +46,7 @@ public class HouseMainActivity extends LoggedInBaseActivity {
                     setToolbarTitle("Expense Manager");
                     break;
                 case R.id.nav_calendar:
-                    loadFragment(calendarManagerFragment, "CalendarManager");
+                    loadFragment(calendarManagerFragment, "CalendarManager", true);
                     setToolbarTitle("Calendar");
                     break;
                 case R.id.nav_home:
@@ -88,6 +91,14 @@ public class HouseMainActivity extends LoggedInBaseActivity {
         View mainLayout = findViewById(R.id.include);
         toolbarTitle = mainLayout.findViewById(R.id.base_title);
 
+        backButton = mainLayout.findViewById(R.id.tab_back_button);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+
         Spinner spinner = findViewById(R.id.menu);
         super.initSpinner(spinner);
         currentUser = ParseUser.getCurrentUser();
@@ -129,7 +140,29 @@ public class HouseMainActivity extends LoggedInBaseActivity {
         fragmentTransaction.commit(); // save the changes
     }
 
-    private void setToolbarTitle(String text) {
+    public int getPX(int dp) {
+        final float scale = getResources().getDisplayMetrics().density;
+        int px = (int) Math.ceil(dp * scale);
+        return px;
+    }
+
+    public void enableBack() {
+        backButton.setVisibility(View.VISIBLE);
+
+        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) toolbarTitle.getLayoutParams();
+        params.setMarginStart(getPX(16));
+        toolbarTitle.setLayoutParams(params);
+    }
+
+    public void disableBack() {
+        backButton.setVisibility(View.GONE);
+
+        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) toolbarTitle.getLayoutParams();
+        params.setMarginStart(0);
+        toolbarTitle.setLayoutParams(params);
+    }
+
+    public void setToolbarTitle(String text) {
         toolbarTitle.setText(text);
     }
 }

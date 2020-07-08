@@ -192,7 +192,7 @@ public class CalendarDialog extends DialogFragment {
         List<ParseObject> houseRes = new ArrayList<ParseObject>();
         ParseObject house;
         ParseQuery<ParseObject> query = ParseQuery.getQuery("House");
-        final String houseName = ((HouseMainActivity) getActivity()).houseName;
+        final String houseName = (String) ((HouseMainActivity) getActivity()).getCurrentHouse().get("houseName");
         final ParseUser currentUser = ((HouseMainActivity) getActivity()).getCurrentUser();
         query.whereEqualTo("houseName", houseName);
 
