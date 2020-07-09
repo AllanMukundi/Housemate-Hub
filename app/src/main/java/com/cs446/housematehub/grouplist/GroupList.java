@@ -25,5 +25,9 @@ public class GroupList {
             this.title = title;
             this.isDone = isDone;
         }
+
+        public void setIsDone(boolean isDone) {
+            this.isDone = isDone;
+        }
     }
 }
