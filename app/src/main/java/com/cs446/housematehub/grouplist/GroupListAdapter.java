@@ -72,7 +72,8 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.Grou
 
         holder.listContainer.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                startFragment(listData.get(position).getObjectId(), "groupListDetails");
+                Fragment fragment = new GroupListItemManager(listData.get(position).getObjectId());
+                ((HouseMainActivity) view.getContext()).loadFragment(fragment, "groupListDetails", false);
             }
         });
 
@@ -101,16 +102,6 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.Grou
     @Override
     public int getItemCount() {
         return listData.size();
-    }
-
-    private void startFragment(String objectId, String tag) {
-        HouseMainActivity mainActivity = ((HouseMainActivity) view.getContext());
-        Fragment fragment = new GroupListItemManager(objectId);
-        FragmentManager appFragmentManager = mainActivity.getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = appFragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.house_main_layout, fragment);
-        fragmentTransaction.addToBackStack(tag);
-        fragmentTransaction.commit(); // save the changes
     }
 
     public interface GroupListAdapterInterface{

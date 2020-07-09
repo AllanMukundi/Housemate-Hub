@@ -140,17 +140,11 @@ public class HouseMainActivity extends LoggedInBaseActivity {
         fragmentTransaction.commit(); // save the changes
     }
 
-    public int getPX(int dp) {
-        final float scale = getResources().getDisplayMetrics().density;
-        int px = (int) Math.ceil(dp * scale);
-        return px;
-    }
-
     public void enableBack() {
         backButton.setVisibility(View.VISIBLE);
 
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) toolbarTitle.getLayoutParams();
-        params.setMarginStart(getPX(16));
+        params.setMarginStart(Utils.getPX(this, 16));
         toolbarTitle.setLayoutParams(params);
     }
 
