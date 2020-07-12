@@ -104,6 +104,8 @@ public class ExpenseManager extends Fragment {
         userAdapter = new UserAdapter(getContext(), new ArrayList<>(users), expenseRecord);
         listView.setAdapter(userAdapter);
 
+        ((HouseMainActivity) getActivity()).disableBack();
+
         return view;
     }
 
@@ -190,12 +192,7 @@ public class ExpenseManager extends Fragment {
                 @Override
                 public void onClick(View v) {
                     Fragment expenseLogFragment = new ExpenseLog(username, color, currentUserName, houseName);
-                    FragmentActivity fa = (FragmentActivity) v.getContext();
-                    FragmentManager fm = fa.getSupportFragmentManager();
-                    FragmentTransaction fragmentTransaction = fm.beginTransaction();
-                    fragmentTransaction.replace(R.id.house_main_layout, expenseLogFragment);
-                    fragmentTransaction.addToBackStack("ExpenseLog");
-                    fragmentTransaction.commit(); // save the changes
+                    ((HouseMainActivity) v.getContext()).loadFragment(expenseLogFragment, "ExpenseLog", false);
                 }
             });
 

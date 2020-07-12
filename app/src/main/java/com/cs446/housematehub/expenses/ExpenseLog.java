@@ -18,6 +18,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.blackcat.currencyedittext.CurrencyEditText;
+import com.cs446.housematehub.HouseMainActivity;
 import com.cs446.housematehub.R;
 import com.cs446.housematehub.Utils;
 import com.google.gson.Gson;
@@ -77,6 +78,8 @@ public class ExpenseLog extends Fragment {
         ListView listView = view.findViewById(R.id.expense_container_list);
         containerAdapter = new ContainerAdapter(getContext(), new ArrayList<>(expenseRecord.keySet()), expenseRecord);
         listView.setAdapter(containerAdapter);
+
+        ((HouseMainActivity) getActivity()).enableBack();
 
         return view;
     }
@@ -225,6 +228,20 @@ public class ExpenseLog extends Fragment {
             }
 
             amount.setValue(division.amount);
+
+            delete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    System.out.println("delete");
+                }
+            });
+
+            edit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    System.out.println("edit");
+                }
+            });
 
             return expenseRow;
         }
