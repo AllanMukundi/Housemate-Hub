@@ -3,6 +3,11 @@
     android:layout_width="match_parent">
 
     <item
+        android:id="@+id/nav_home"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_home_24"
+        android:title="@string/menu_label_home"/>
+    <item
         android:id="@+id/nav_expenses"
         android:enabled="true"
         android:icon="@drawable/ic_baseline_attach_money_24"
@@ -12,16 +17,6 @@
         android:enabled="true"
         android:icon="@drawable/ic_baseline_calendar_today_24"
         android:title="@string/menu_label_calendar"/>
-    <item
-        android:id="@+id/nav_home"
-        android:enabled="true"
-        android:icon="@drawable/ic_baseline_home_24"
-        android:title="@string/menu_label_home"/>
-    <item
-        android:id="@+id/nav_chat"
-        android:enabled="true"
-        android:icon="@drawable/ic_baseline_chat_bubble_24"
-        android:title="@string/menu_label_chat"/>
     <item
         android:id="@+id/nav_lists"
         android:enabled="true"

@@ -52,9 +52,6 @@ public class HouseMainActivity extends LoggedInBaseActivity {
                 case R.id.nav_home:
                     setToolbarTitle("Housemate Hub");
                     break;
-                case R.id.nav_chat:
-                    setToolbarTitle("Chat");
-                    break;
                 case R.id.nav_lists:
                     loadFragment(groupListManagerFragment, "GroupListManager", true);
                     setToolbarTitle("Lists");
