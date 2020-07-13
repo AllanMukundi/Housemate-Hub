@@ -17,10 +17,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.blackcat.currencyedittext.CurrencyEditText;
 import com.cs446.housematehub.HouseMainActivity;
 import com.cs446.housematehub.R;
+import com.cs446.housematehub.Utils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.parse.ParseException;
@@ -38,8 +42,9 @@ import static com.cs446.housematehub.LoggedInBaseActivity.objectToJSONArray;
 
 public class ExpenseManager extends Fragment {
 
-    private ParseUser currentUser = ParseUser.getCurrentUser();
-    private String currentUserName = currentUser.getUsername();
+    static private ParseUser currentUser = ParseUser.getCurrentUser();
+    static private String currentUserName = currentUser.getUsername();
+    static private String houseName;
     private HashMap<String, Long> expenseRecord = new HashMap<>();
     private UserAdapter userAdapter = null;
     private TextView loggedInVerb;
@@ -56,8 +61,10 @@ public class ExpenseManager extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         View view = inflater.inflate(R.layout.fragment_expense_manager, container, false);
         FloatingActionButton addExpenseButton = view.findViewById(R.id.addButton);
+        houseName = (String) ((HouseMainActivity) getActivity()).getCurrentHouse().get("houseName");
 
         addExpenseButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,13 +104,14 @@ public class ExpenseManager extends Fragment {
         userAdapter = new UserAdapter(getContext(), new ArrayList<>(users), expenseRecord);
         listView.setAdapter(userAdapter);
 
+        ((HouseMainActivity) getActivity()).disableBack();
+
         return view;
     }
 
     public void updateExpenseRecord() {
         List<ParseObject> expenseRes = new ArrayList<ParseObject>();
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Expense");
-        final String houseName = (String) ((HouseMainActivity) getActivity()).getCurrentHouse().get("houseName");
         query.whereEqualTo("houseName", houseName);
 
         try {
@@ -160,24 +168,33 @@ public class ExpenseManager extends Fragment {
         @NonNull
         @Override
         public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-            View user_row = convertView;
-            if (user_row == null) {
-                user_row = LayoutInflater.from(this.mContext).inflate(R.layout.expense_manager_overview_user_row, parent, false);
+            View userRow = convertView;
+            if (userRow == null) {
+                userRow = LayoutInflater.from(this.mContext).inflate(R.layout.expense_manager_overview_user_row, parent, false);
             }
 
             ParseObject currUser = users.get(position);
 
-            ImageView circle = user_row.findViewById(R.id.overview_user_row_circle);
-            TextView name = user_row.findViewById(R.id.overview_user_row_name);
-            CurrencyEditText amount = user_row.findViewById(R.id.overview_user_row_amount);
-            ImageView see_more = user_row.findViewById(R.id.overview_user_see_more_image);
+            ImageView circle = userRow.findViewById(R.id.overview_user_row_circle);
+            TextView name = userRow.findViewById(R.id.overview_user_row_name);
+            CurrencyEditText amount = userRow.findViewById(R.id.overview_user_row_amount);
+            ImageView see_more = userRow.findViewById(R.id.overview_user_see_more_image);
 
-            String username = currUser.get("username").toString();
+            final String username = currUser.get("username").toString();
 
             name.setText(username);
 
             GradientDrawable drawable = (GradientDrawable) circle.getDrawable();
-            drawable.setColor((int) currUser.get("color"));
+            final Object color = currUser.get("color");
+            drawable.setColor((int) color);
+
+            see_more.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Fragment expenseLogFragment = new ExpenseLog(username, color, currentUserName, houseName);
+                    ((HouseMainActivity) v.getContext()).loadFragment(expenseLogFragment, "ExpenseLog", false);
+                }
+            });
 
             if (expenseRecord.containsKey(username)) {
                 long amount_val = expenseRecord.get(username);
@@ -191,7 +208,7 @@ public class ExpenseManager extends Fragment {
                 }
             }
 
-            return user_row;
+            return userRow;
         }
     }
 }
