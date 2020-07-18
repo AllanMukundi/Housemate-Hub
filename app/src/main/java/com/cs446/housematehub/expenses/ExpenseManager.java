@@ -17,14 +17,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.blackcat.currencyedittext.CurrencyEditText;
 import com.cs446.housematehub.HouseMainActivity;
 import com.cs446.housematehub.R;
-import com.cs446.housematehub.Utils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.parse.ParseException;
@@ -49,6 +45,7 @@ public class ExpenseManager extends Fragment {
     private UserAdapter userAdapter = null;
     private TextView loggedInVerb;
     private CurrencyEditText loggedInAmount;
+    private List<ParseObject> users = new ArrayList<>();
 
     public ExpenseManager() {
     }
@@ -69,14 +66,15 @@ public class ExpenseManager extends Fragment {
         addExpenseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putBoolean("isEdit", false);
                 ExpenseDialog dialog = new ExpenseDialog();
+                dialog.setArguments(bundle);
+
                 dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @Override
                     public void onDismiss(DialogInterface dialog) {
                         updateExpenseRecord();
-                        if (userAdapter != null) {
-                            userAdapter.notifyDataSetChanged();
-                        }
                     }
                 });
                 dialog.show(getChildFragmentManager(), "ExpenseDialog");
@@ -92,7 +90,7 @@ public class ExpenseManager extends Fragment {
         loggedInVerb = view.findViewById(R.id.expense_verb);
         loggedInAmount = view.findViewById(R.id.logged_in_user_amount);
 
-        List<ParseObject> users = ((HouseMainActivity) getActivity()).getHouseUsers(false);
+        users = ((HouseMainActivity) getActivity()).getHouseUsers(false);
 
         for (ParseObject user : users) {
             String username = user.get("username").toString();
@@ -122,6 +120,13 @@ public class ExpenseManager extends Fragment {
 
         long total = 0;
 
+        expenseRecord.clear();
+
+        for (ParseObject user : users) {
+            String username = user.get("username").toString();
+            expenseRecord.put(username, (long) 0);
+        }
+
         for (ParseObject expense : expenseRes) {
             Gson gson = new Gson();
             JSONArray ja = objectToJSONArray(expense.get("division"));
@@ -139,7 +144,7 @@ public class ExpenseManager extends Fragment {
             }
         }
 
-        loggedInAmount.setValue(Math.abs(total));
+
         if (total < 0) {
             loggedInAmount.setTextColor(ContextCompat.getColor(getContext(), R.color.colorDebtRed));
             loggedInVerb.setText("You owe");
@@ -149,6 +154,19 @@ public class ExpenseManager extends Fragment {
         } else {
             loggedInAmount.setTextColor(Color.BLACK);
         }
+
+        loggedInAmount.setValue(Math.abs(total));
+
+        if (userAdapter != null) {
+            userAdapter.notifyDataSetChanged();
+        }
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateExpenseRecord();
     }
 
     public static class UserAdapter extends ArrayAdapter<ParseObject> {
@@ -200,8 +218,10 @@ public class ExpenseManager extends Fragment {
                 long amount_val = expenseRecord.get(username);
                 amount.setValue(Math.abs(amount_val));
                 if (amount_val < 0) {
+                    see_more.setVisibility(View.VISIBLE);
                     amount.setTextColor(ContextCompat.getColor(this.mContext, R.color.colorDebtRed));
                 } else if (amount_val > 0) {
+                    see_more.setVisibility(View.VISIBLE);
                     amount.setTextColor(ContextCompat.getColor(this.mContext, R.color.colorOwedGreen));
                 } else {
                     see_more.setVisibility(View.GONE);

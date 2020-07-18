@@ -53,6 +53,9 @@ public class ExpenseDialog extends DialogFragment implements AdapterView.OnItemS
     private HashMap<String, CurrencyEditText> expenseRecord = new HashMap<String, CurrencyEditText>();
     private long[] expenseRecordInit; // hacky workaround
     private DialogInterface.OnDismissListener onDismissListener;
+    private TextView headerTitle;
+    private boolean isEdit;
+    ParseObject editExpense;
 
     public ExpenseDialog() {
     }
@@ -73,12 +76,45 @@ public class ExpenseDialog extends DialogFragment implements AdapterView.OnItemS
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_expense_dialog, container, false);
 
+        isEdit = getArguments().getBoolean("isEdit");
+
         Button cancelButton = view.findViewById(R.id.cancel_button);
         Button createButton = view.findViewById(R.id.create_button);
         Button splitButton = view.findViewById(R.id.split_evenly);
 
+        headerTitle = view.findViewById(R.id.header_title);
         expenseTitle = view.findViewById(R.id.expense_title);
         expenseAmount = view.findViewById(R.id.expense_amount);
+
+        if (isEdit) {
+            long expenseId = getArguments().getLong("expenseId");
+            headerTitle.setText("Edit an expense");
+
+            ParseQuery<ParseObject> query = ParseQuery.getQuery("Expense");
+            String houseName = (String) ((HouseMainActivity) getActivity()).getCurrentHouse().get("houseName");
+
+            query.whereEqualTo("houseName", houseName);
+            query.whereEqualTo("expenseId", expenseId);
+            List<ParseObject> expenseRes = new ArrayList<>();
+
+            try {
+                expenseRes = query.find();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            if (expenseRes.size() == 0) {
+                throw new RuntimeException("Expense with the given id was not found");
+            }
+
+            editExpense = expenseRes.get(0); // should only be one matching row
+
+            expenseTitle.setText(editExpense.getString("expenseTitle"));
+            expenseAmount.setValue(editExpense.getLong("expenseAmount"));
+
+        } else {
+            headerTitle.setText("Add an expense");
+        }
 
         ListView listView = view.findViewById(R.id.user_list);
         users = ((HouseMainActivity) getActivity()).getHouseUsers(true);
@@ -227,29 +263,44 @@ public class ExpenseDialog extends DialogFragment implements AdapterView.OnItemS
             }.getType());
             try {
                 final JSONArray jsonArray = new JSONArray(element.getAsJsonArray().toString());
-                house.put("nextExpenseId", id + 1);
-                house.saveInBackground(new SaveCallback() {
-                    @Override
-                    public void done(ParseException e) {
-                        ParseObject expenseEntry = new ParseObject("Expense");
-                        expenseEntry.put("houseName", houseName);
-                        expenseEntry.put("expenseId", id);
-                        expenseEntry.put("expenseTitle", expense.title);
-                        expenseEntry.put("expenseAmount", expense.total);
-                        expenseEntry.put("expenseDate", expense.date);
-                        expenseEntry.put("division", jsonArray);
-                        expenseEntry.saveInBackground(new SaveCallback() {
-                            @Override
-                            public void done(ParseException e) {
-                                if (e == null) {
-                                    dismiss();
-                                } else {
-                                    e.printStackTrace();
+                if (editExpense == null) {
+                    house.put("nextExpenseId", id + 1);
+                    house.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            ParseObject expenseEntry = new ParseObject("Expense");
+                            expenseEntry.put("houseName", houseName);
+                            expenseEntry.put("expenseId", id);
+                            expenseEntry.put("expenseTitle", expense.title);
+                            expenseEntry.put("expenseAmount", expense.total);
+                            expenseEntry.put("expenseDate", expense.date);
+                            expenseEntry.put("division", jsonArray);
+                            expenseEntry.saveInBackground(new SaveCallback() {
+                                @Override
+                                public void done(ParseException e) {
+                                    if (e == null) {
+                                        dismiss();
+                                    } else {
+                                        e.printStackTrace();
+                                    }
                                 }
-                            }
-                        });
+                            });
+                        }
+                    });
+                } else {
+                    editExpense.put("houseName", houseName);
+                    editExpense.put("expenseId", id);
+                    editExpense.put("expenseTitle", expense.title);
+                    editExpense.put("expenseAmount", expense.total);
+                    editExpense.put("expenseDate", expense.date);
+                    editExpense.put("division", jsonArray);
+                    try {
+                        editExpense.save();
+                    } catch (ParseException e) {
+                        e.printStackTrace();
                     }
-                });
+                    dismiss();
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
