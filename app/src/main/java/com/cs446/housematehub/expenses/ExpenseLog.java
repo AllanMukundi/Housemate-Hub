@@ -23,13 +23,17 @@ import com.cs446.housematehub.HouseMainActivity;
 import com.cs446.housematehub.R;
 import com.cs446.housematehub.Utils;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.reflect.TypeToken;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -153,7 +157,69 @@ public class ExpenseLog extends Fragment {
 
         if (containerAdapter != null) {
             containerAdapter.setExpenseRecord(expenseRecord);
+            containerAdapter.notifyDataSetChanged();
         }
+    }
+
+    public void deleteExpense(Expense expense, Expense.ExpenseDivision division) {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Expense");
+        String houseName = (String) ((HouseMainActivity) getActivity()).getCurrentHouse().get("houseName");
+
+        query.whereEqualTo("houseName", houseName);
+        query.whereEqualTo("expenseId", expense.id);
+        List<ParseObject> expenseRes = new ArrayList<>();
+
+        try {
+            expenseRes = query.find();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        if (expenseRes.size() == 0) {
+            throw new RuntimeException("Expense with the given id was not found");
+        }
+
+        ParseObject editExpense = expenseRes.get(0); // should only be one matching row
+
+        Gson gson = new Gson();
+
+        JSONArray ja = objectToJSONArray(editExpense.get("division"));
+        Expense.ExpenseDivision[] divisions = gson.fromJson(ja.toString(), Expense.ExpenseDivision[].class);
+
+        List<Expense.ExpenseDivision> fullDivision = new ArrayList<>(Arrays.asList(divisions));
+
+
+        if (fullDivision.size() == 1) { // can delete whole expense entirely
+            try {
+                editExpense.delete();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        } else { // only delete one division
+            for (int i = 0; i < fullDivision.size(); ++i) {
+                Expense.ExpenseDivision temp = fullDivision.get(i);
+                if (temp.amount == division.amount && temp.from.equals(division.from) && temp.to.equals(division.to)) {
+                    fullDivision.remove(temp);
+                }
+            }
+
+            JsonElement element = gson.toJsonTree(fullDivision, new TypeToken<List<Expense.ExpenseDivision>>() {
+            }.getType());
+            try {
+                final JSONArray jsonArray = new JSONArray(element.getAsJsonArray().toString());
+                editExpense.put("expenseAmount", expense.total - division.amount);
+                editExpense.put("division", jsonArray);
+                try {
+                    editExpense.save();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        updateExpenseRecord();
     }
 
 
@@ -185,6 +251,7 @@ public class ExpenseLog extends Fragment {
             List<Expense> expenses = expenseRecord.get(date);
 
             if (expenses != null) {
+                System.out.println("test");
                 container.setVisibility(View.VISIBLE);
                 TextView dateText = container.findViewById(R.id.expense_date);
                 ListView listView = container.findViewById(R.id.expense_list);
@@ -195,7 +262,7 @@ public class ExpenseLog extends Fragment {
                 listView.setAdapter(listItemAdapter);
                 Utils.updateListViewHeight(listView);
             } else {
-                container.setVisibility(View.GONE);
+                return new View(getContext());
             }
 
             return container;
@@ -238,7 +305,7 @@ public class ExpenseLog extends Fragment {
 
             textView.setText(expense.title);
 
-            Expense.ExpenseDivision division = expense.division.get(0);
+            final Expense.ExpenseDivision division = expense.division.get(0);
 
             if (division.from.equals(userMe)) {
                 amount.setTextColor(ContextCompat.getColor(getContext(), R.color.colorDebtRed));
@@ -248,14 +315,14 @@ public class ExpenseLog extends Fragment {
 
             amount.setValue(division.amount);
 
+            final ExpenseLog parentFinal = this.parent;
+
             delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    System.out.println("delete");
+                    parentFinal.deleteExpense(expense, division);
                 }
             });
-
-            final ExpenseLog parentFinal = this.parent;
 
             edit.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -270,9 +337,6 @@ public class ExpenseLog extends Fragment {
                         @Override
                         public void onDismiss(DialogInterface dialog) {
                             parentFinal.updateExpenseRecord();
-                            if (parentFinal.containerAdapter != null) {
-                                parentFinal.containerAdapter.notifyDataSetChanged();
-                            }
                         }
                     });
                     dialog.show(parentFinal.getChildFragmentManager(), "ExpenseDialog");
