@@ -15,6 +15,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.cs446.housematehub.calendar.CalendarManager;
+import com.cs446.housematehub.dashboard.DashboardManager;
 import com.cs446.housematehub.account.AccountDetails;
 import com.cs446.housematehub.expenses.ExpenseManager;
 import com.cs446.housematehub.grouplist.GroupListManager;
@@ -36,30 +37,9 @@ public class HouseMainActivity extends LoggedInBaseActivity {
     private Fragment expenseManagerFragment = new ExpenseManager();
     private Fragment groupListManagerFragment = new GroupListManager();
     private Fragment calendarManagerFragment = new CalendarManager();
-
-    BottomNavigationView.OnNavigationItemSelectedListener navListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.nav_expenses:
-                    loadFragment(expenseManagerFragment, "ExpenseManager", true);
-                    setToolbarTitle("Expense Manager");
-                    break;
-                case R.id.nav_calendar:
-                    loadFragment(calendarManagerFragment, "CalendarManager", true);
-                    setToolbarTitle("Calendar");
-                    break;
-                case R.id.nav_home:
-                    setToolbarTitle("Housemate Hub");
-                    break;
-                case R.id.nav_lists:
-                    loadFragment(groupListManagerFragment, "GroupListManager", true);
-                    setToolbarTitle("Lists");
-                    break;
-            }
-            return true;
-        }
-    };
+    private Fragment dashboardManagerFragment = new DashboardManager();
+    private Fragment activeFragment = dashboardManagerFragment;
+    private FragmentManager fm;
 
     public List<ParseObject> getHouseUsers(boolean inclusive) {
         List<ParseObject> users = new ArrayList<ParseObject>();
@@ -102,6 +82,42 @@ public class HouseMainActivity extends LoggedInBaseActivity {
         String houseName = currentUser.get("houseName").toString();
         currentHouse = getCurrentHouse(houseName);
 
+        fm = getSupportFragmentManager();
+        fm.beginTransaction().add(R.id.house_main_layout, expenseManagerFragment, "ExpenseManager").hide(expenseManagerFragment)
+                .add(R.id.house_main_layout, calendarManagerFragment, "CalendarManager").hide(calendarManagerFragment)
+                .add(R.id.house_main_layout, groupListManagerFragment, "GroupListManager").hide(groupListManagerFragment)
+                .add(R.id.house_main_layout, dashboardManagerFragment, "DashboardeManager")
+                .commit();
+
+        BottomNavigationView.OnNavigationItemSelectedListener navListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.nav_expenses:
+                        fm.beginTransaction().hide(activeFragment).show(expenseManagerFragment).commit();
+                        activeFragment = expenseManagerFragment;
+                        setToolbarTitle("Expense Manager");
+                        break;
+                    case R.id.nav_calendar:
+                        fm.beginTransaction().hide(activeFragment).show(calendarManagerFragment).commit();
+                        activeFragment = calendarManagerFragment;
+                        setToolbarTitle("Calendar");
+                        break;
+                    case R.id.nav_home:
+                        fm.beginTransaction().hide(activeFragment).show(dashboardManagerFragment).commit();
+                        activeFragment = dashboardManagerFragment;
+                        setToolbarTitle("Housemate Hub");
+                        break;
+                    case R.id.nav_lists:
+                        fm.beginTransaction().hide(activeFragment).show(groupListManagerFragment).commit();
+                        activeFragment = groupListManagerFragment;
+                        setToolbarTitle("Lists");
+                        break;
+                }
+                return true;
+            }
+        };
+
         BottomNavigationView bottomNavigation = findViewById(R.id.navigationView);
         bottomNavigation.bringToFront();
         bottomNavigation.setSelectedItemId(R.id.nav_home);
@@ -126,6 +142,7 @@ public class HouseMainActivity extends LoggedInBaseActivity {
         }
     }
 
+    // Depricated
     public void loadFragment(Fragment fragment, String tag, boolean popBackstack) {
         FragmentManager fm = getSupportFragmentManager();
         if (popBackstack) {
