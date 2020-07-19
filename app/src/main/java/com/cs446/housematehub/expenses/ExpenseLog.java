@@ -21,6 +21,7 @@ import com.blackcat.currencyedittext.CurrencyEditText;
 import com.cs446.housematehub.HouseMainActivity;
 import com.cs446.housematehub.R;
 import com.cs446.housematehub.Utils;
+import com.cs446.housematehub.account.AccountDetails;
 import com.google.gson.Gson;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -80,6 +81,15 @@ public class ExpenseLog extends Fragment {
         listView.setAdapter(containerAdapter);
 
         ((HouseMainActivity) getActivity()).enableBack();
+
+        View.OnClickListener userDetailsListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((HouseMainActivity) getActivity()).loadFragment(AccountDetails.newInstance(userOther), "accountDetails", false);
+            }
+        };
+        userFromText.setOnClickListener(userDetailsListener);
+        circle.setOnClickListener(userDetailsListener);
 
         return view;
     }
