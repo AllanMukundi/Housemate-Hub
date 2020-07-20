@@ -41,6 +41,7 @@ dependencies {
     implementation 'com.mobsandgeeks:android-saripaar:2.0.3'
     implementation 'com.github.BlacKCaT27:CurrencyEditText:2.0.2'
     implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'se.emilsjolander:StickyScrollViewItems:1.1.0'
 }
 
 repositories {

@@ -6,6 +6,25 @@
     android:layout_height="match_parent"
     tools:context=".expenses.ExpenseManager">
 
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/pullToRefresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:layout_marginBottom="120px">
+        <com.emilsjolander.components.StickyScrollViewItems.StickyScrollView
+            android:id="@+id/stickyScroll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:id="@+id/event_list">
+            </LinearLayout>
+        </com.emilsjolander.components.StickyScrollViewItems.StickyScrollView>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addButton"
