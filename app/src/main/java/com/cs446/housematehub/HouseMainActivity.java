@@ -16,6 +16,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.cs446.housematehub.calendar.CalendarManager;
 import com.cs446.housematehub.account.AccountDetails;
+import com.cs446.housematehub.dashboard.DashboardManager;
 import com.cs446.housematehub.expenses.ExpenseManager;
 import com.cs446.housematehub.grouplist.GroupListManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -25,7 +26,9 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Stack;
 
 public class HouseMainActivity extends LoggedInBaseActivity {
 
@@ -33,52 +36,14 @@ public class HouseMainActivity extends LoggedInBaseActivity {
     private ParseObject currentHouse;
     private TextView toolbarTitle;
     private ImageButton backButton;
-    private Fragment expenseManagerFragment = new ExpenseManager();
-    private Fragment groupListManagerFragment = new GroupListManager();
-    private Fragment calendarManagerFragment = new CalendarManager();
 
-    BottomNavigationView.OnNavigationItemSelectedListener navListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.nav_expenses:
-                    loadFragment(expenseManagerFragment, "ExpenseManager", true);
-                    setToolbarTitle("Expense Manager");
-                    break;
-                case R.id.nav_calendar:
-                    loadFragment(calendarManagerFragment, "CalendarManager", true);
-                    setToolbarTitle("Calendar");
-                    break;
-                case R.id.nav_home:
-                    setToolbarTitle("Housemate Hub");
-                    break;
-                case R.id.nav_lists:
-                    loadFragment(groupListManagerFragment, "GroupListManager", true);
-                    setToolbarTitle("Lists");
-                    break;
-            }
-            return true;
-        }
-    };
+    public static final String TAB_DASHBOARD = "tab_dashboard";
+    public static final String TAB_EXPENSE = "tab_expense";
+    public static final String TAB_CALENDAR = "tab_calendar";
+    public static final String TAB_LIST = "tab_list";
 
-    public List<ParseObject> getHouseUsers(boolean inclusive) {
-        List<ParseObject> users = new ArrayList<ParseObject>();
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("_User");
-        query.whereEqualTo("houseName", currentHouse.get("houseName"));
-        if (!inclusive) {
-            query.whereNotEqualTo("username", currentUser.getUsername());
-        }
-        try {
-            users = query.find();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return users;
-    }
-
-    public ParseUser getCurrentUser() {
-        return currentUser;
-    }
+    private HashMap<String, Stack<Fragment>> mStacks;
+    private String mCurrentTab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,7 +70,107 @@ public class HouseMainActivity extends LoggedInBaseActivity {
         BottomNavigationView bottomNavigation = findViewById(R.id.navigationView);
         bottomNavigation.bringToFront();
         bottomNavigation.setSelectedItemId(R.id.nav_home);
+
+        mStacks = new HashMap<String, Stack<Fragment>>();
+        mStacks.put(TAB_DASHBOARD, new Stack<Fragment>());
+        mStacks.put(TAB_EXPENSE, new Stack<Fragment>());
+        mStacks.put(TAB_CALENDAR, new Stack<Fragment>());
+        mStacks.put(TAB_LIST, new Stack<Fragment>());
+
         bottomNavigation.setOnNavigationItemSelectedListener(navListener);
+    }
+
+    BottomNavigationView.OnNavigationItemSelectedListener navListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.nav_expenses:
+                    selectedTab(TAB_EXPENSE);
+                    setToolbarTitle("Expense Manager");
+                    break;
+                case R.id.nav_calendar:
+                    selectedTab(TAB_CALENDAR);
+                    setToolbarTitle("Calendar");
+                    break;
+                case R.id.nav_home:
+                    selectedTab(TAB_DASHBOARD);
+                    setToolbarTitle("Housemate Hub");
+                    break;
+                case R.id.nav_lists:
+                    selectedTab(TAB_LIST);
+                    setToolbarTitle("Lists");
+                    break;
+            }
+            return true;
+        }
+    };
+
+    private void selectedTab(String tabId)
+    {
+        mCurrentTab = tabId;
+
+        if(mStacks.get(tabId).size() == 0){
+            if(tabId.equals(TAB_DASHBOARD)){
+                changeFragments(tabId, new DashboardManager(),true);
+            }else if(tabId.equals(TAB_EXPENSE)){
+                changeFragments(tabId, new ExpenseManager(),true);
+            }else if(tabId.equals(TAB_CALENDAR)){
+                changeFragments(tabId, new CalendarManager(),true);
+            }else if(tabId.equals(TAB_LIST)){
+                changeFragments(tabId, new GroupListManager(),true);
+            }
+        }else {
+            changeFragments(tabId, mStacks.get(tabId).lastElement(),false);
+        }
+    }
+
+    public void changeFragments(String tag, Fragment fragment, boolean shouldAdd){
+        if(shouldAdd) mStacks.get(tag).push(fragment);
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction ft = manager.beginTransaction();
+        ft.replace(R.id.house_main_layout, fragment);
+        ft.commit();
+    }
+
+    public void popFragments(){
+        //Select the second last fragment in current tab's stack..
+        Fragment fragment = mStacks.get(mCurrentTab).elementAt(mStacks.get(mCurrentTab).size() - 2);
+
+        /*pop current fragment from stack.. */
+        mStacks.get(mCurrentTab).pop();
+
+        changeFragments(null, fragment, false);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(mStacks.get(mCurrentTab).size() == 1){
+            // We are already showing first fragment of current tab, so when back pressed, we will finish this activity..
+            finish();
+            return;
+        }
+
+        /* Goto previous fragment in navigation stack of this tab */
+        popFragments();
+    }
+
+    public List<ParseObject> getHouseUsers(boolean inclusive) {
+        List<ParseObject> users = new ArrayList<ParseObject>();
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("_User");
+        query.whereEqualTo("houseName", currentHouse.get("houseName"));
+        if (!inclusive) {
+            query.whereNotEqualTo("username", currentUser.getUsername());
+        }
+        try {
+            users = query.find();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return users;
+    }
+
+    public ParseUser getCurrentUser() {
+        return currentUser;
     }
 
     public ParseObject getCurrentHouse() {

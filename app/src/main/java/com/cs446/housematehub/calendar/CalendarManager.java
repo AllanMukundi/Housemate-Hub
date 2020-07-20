@@ -61,6 +61,7 @@ public class CalendarManager extends Fragment {
         rightNow = Calendar.getInstance();
         mainActivity = ((HouseMainActivity) getActivity());
         houseName = (String) mainActivity.getCurrentHouse().get("houseName");
+        getCalendarEvents();
     }
 
     @Override
@@ -94,6 +95,7 @@ public class CalendarManager extends Fragment {
             }
         });
 
+        addEventCards(inflater);
         return view;
     }
 
