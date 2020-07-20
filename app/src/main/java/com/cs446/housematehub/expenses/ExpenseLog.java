@@ -1,6 +1,7 @@
 package com.cs446.housematehub.expenses;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
@@ -23,13 +24,17 @@ import com.cs446.housematehub.R;
 import com.cs446.housematehub.Utils;
 import com.cs446.housematehub.account.AccountDetails;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.reflect.TypeToken;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -37,9 +42,9 @@ import static com.cs446.housematehub.LoggedInBaseActivity.objectToJSONArray;
 
 public class ExpenseLog extends Fragment {
 
+    private static String userMe;
     private String userOther;
     private Object userOtherColor;
-    private static String userMe;
     private String houseName;
     private HashMap<String, List<Expense>> expenseRecord = new HashMap<>();
     private TextView loggedInVerb;
@@ -49,7 +54,7 @@ public class ExpenseLog extends Fragment {
     public ExpenseLog(String userOther, Object userOtherColor, String userMe, String houseName) {
         this.userOther = userOther;
         this.userOtherColor = userOtherColor;
-        this.userMe = userMe;
+        ExpenseLog.userMe = userMe;
         this.houseName = houseName;
     }
 
@@ -77,7 +82,7 @@ public class ExpenseLog extends Fragment {
         updateExpenseRecord();
 
         ListView listView = view.findViewById(R.id.expense_container_list);
-        containerAdapter = new ContainerAdapter(getContext(), new ArrayList<>(expenseRecord.keySet()), expenseRecord);
+        containerAdapter = new ContainerAdapter(getContext(), new ArrayList<>(expenseRecord.keySet()), expenseRecord, this);
         listView.setAdapter(containerAdapter);
 
         ((HouseMainActivity) getActivity()).enableBack();
@@ -93,7 +98,6 @@ public class ExpenseLog extends Fragment {
 
         return view;
     }
-
 
     public void updateExpenseRecord() {
         List<ParseObject> expenseRes = new ArrayList<ParseObject>();
@@ -160,20 +164,88 @@ public class ExpenseLog extends Fragment {
         } else {
             loggedInAmount.setTextColor(Color.BLACK);
         }
+
+        if (containerAdapter != null) {
+            containerAdapter.setExpenseRecord(expenseRecord);
+            containerAdapter.notifyDataSetChanged();
+        }
+    }
+
+    public void deleteExpense(Expense expense, Expense.ExpenseDivision division) {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Expense");
+        String houseName = (String) ((HouseMainActivity) getActivity()).getCurrentHouse().get("houseName");
+
+        query.whereEqualTo("houseName", houseName);
+        query.whereEqualTo("expenseId", expense.id);
+        List<ParseObject> expenseRes = new ArrayList<>();
+
+        try {
+            expenseRes = query.find();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        if (expenseRes.size() == 0) {
+            throw new RuntimeException("Expense with the given id was not found");
+        }
+
+        ParseObject editExpense = expenseRes.get(0); // should only be one matching row
+
+        Gson gson = new Gson();
+
+        JSONArray ja = objectToJSONArray(editExpense.get("division"));
+        Expense.ExpenseDivision[] divisions = gson.fromJson(ja.toString(), Expense.ExpenseDivision[].class);
+
+        List<Expense.ExpenseDivision> fullDivision = new ArrayList<>(Arrays.asList(divisions));
+
+
+        if (fullDivision.size() == 1) { // can delete whole expense entirely
+            try {
+                editExpense.delete();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        } else { // only delete one division
+            for (int i = 0; i < fullDivision.size(); ++i) {
+                Expense.ExpenseDivision temp = fullDivision.get(i);
+                if (temp.amount == division.amount && temp.from.equals(division.from) && temp.to.equals(division.to)) {
+                    fullDivision.remove(temp);
+                }
+            }
+
+            JsonElement element = gson.toJsonTree(fullDivision, new TypeToken<List<Expense.ExpenseDivision>>() {
+            }.getType());
+            try {
+                final JSONArray jsonArray = new JSONArray(element.getAsJsonArray().toString());
+                editExpense.put("expenseAmount", expense.total - division.amount);
+                editExpense.put("division", jsonArray);
+                try {
+                    editExpense.save();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        updateExpenseRecord();
     }
 
 
     public static class ContainerAdapter extends ArrayAdapter<String> {
 
+        ExpenseLog parent;
         private Context mContext;
         private List<String> dates;
         private HashMap<String, List<Expense>> expenseRecord;
 
-        public ContainerAdapter(@NonNull Context context, ArrayList<String> dates, HashMap<String, List<Expense>> expenseRecord) {
+        public ContainerAdapter(@NonNull Context context, ArrayList<String> dates, HashMap<String, List<Expense>> expenseRecord, ExpenseLog parent) {
             super(context, R.layout.expense_log_item_container, dates);
             this.mContext = context;
             this.dates = dates;
             this.expenseRecord = expenseRecord;
+            this.parent = parent;
         }
 
         @NonNull
@@ -188,27 +260,41 @@ public class ExpenseLog extends Fragment {
             String date = dates.get(position);
             List<Expense> expenses = expenseRecord.get(date);
 
-            TextView dateText = container.findViewById(R.id.expense_date);
-            ListView listView = container.findViewById(R.id.expense_list);
+            if (expenses != null) {
+                System.out.println("test");
+                container.setVisibility(View.VISIBLE);
+                TextView dateText = container.findViewById(R.id.expense_date);
+                ListView listView = container.findViewById(R.id.expense_list);
 
-            dateText.setText(date);
-            ListItemAdapter listItemAdapter = new ListItemAdapter(getContext(), new ArrayList<Expense>(expenses));
-            listView.setAdapter(listItemAdapter);
-            Utils.updateListViewHeight(listView);
+                dateText.setText(date);
+
+                ListItemAdapter listItemAdapter = new ListItemAdapter(getContext(), new ArrayList<Expense>(expenses), this.parent);
+                listView.setAdapter(listItemAdapter);
+                Utils.updateListViewHeight(listView);
+            } else {
+                return new View(getContext());
+            }
 
             return container;
+        }
+
+        public void setExpenseRecord(HashMap<String, List<Expense>> expenseRecord) {
+            this.expenseRecord.clear();
+            this.expenseRecord.putAll(expenseRecord);
         }
     }
 
     public static class ListItemAdapter extends ArrayAdapter<Expense> {
 
+        ExpenseLog parent;
         private Context mContext;
         private List<Expense> expenses;
 
-        public ListItemAdapter(@NonNull Context context, ArrayList<Expense> expenses) {
+        public ListItemAdapter(@NonNull Context context, ArrayList<Expense> expenses, ExpenseLog parent) {
             super(context, R.layout.expense_log_item_row, expenses);
             this.mContext = context;
             this.expenses = expenses;
+            this.parent = parent;
         }
 
         @NonNull
@@ -220,7 +306,7 @@ public class ExpenseLog extends Fragment {
                 expenseRow = LayoutInflater.from(this.mContext).inflate(R.layout.expense_log_item_row, parent, false);
             }
 
-            Expense expense = expenses.get(position);
+            final Expense expense = expenses.get(position);
 
             TextView textView = expenseRow.findViewById(R.id.expense_item_name);
             CurrencyEditText amount = expenseRow.findViewById(R.id.expense_item_amount);
@@ -229,7 +315,7 @@ public class ExpenseLog extends Fragment {
 
             textView.setText(expense.title);
 
-            Expense.ExpenseDivision division = expense.division.get(0);
+            final Expense.ExpenseDivision division = expense.division.get(0);
 
             if (division.from.equals(userMe)) {
                 amount.setTextColor(ContextCompat.getColor(getContext(), R.color.colorDebtRed));
@@ -239,17 +325,31 @@ public class ExpenseLog extends Fragment {
 
             amount.setValue(division.amount);
 
+            final ExpenseLog parentFinal = this.parent;
+
             delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    System.out.println("delete");
+                    parentFinal.deleteExpense(expense, division);
                 }
             });
 
             edit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    System.out.println("edit");
+                    Bundle bundle = new Bundle();
+                    bundle.putBoolean("isEdit", true);
+                    bundle.putLong("expenseId", expense.id);
+                    ExpenseDialog dialog = new ExpenseDialog();
+                    dialog.setArguments(bundle);
+
+                    dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+                            parentFinal.updateExpenseRecord();
+                        }
+                    });
+                    dialog.show(parentFinal.getChildFragmentManager(), "ExpenseDialog");
                 }
             });
 
