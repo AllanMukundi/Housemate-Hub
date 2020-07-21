@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import com.cs446.housematehub.HouseMainActivity;
 import com.cs446.housematehub.R;
-import com.emilsjolander.components.StickyScrollViewItems.StickyScrollView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.parse.Parse;
 import com.parse.ParseException;
@@ -34,6 +33,7 @@ import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import static com.cs446.housematehub.calendar.EventType.getEnum;
@@ -96,6 +96,8 @@ public class CalendarManager extends Fragment {
         });
 
         addEventCards(inflater);
+        mainActivity.disableBack();
+        mainActivity.setToolbarTitle("Calendar");
         return view;
     }
 
@@ -134,17 +136,26 @@ public class CalendarManager extends Fragment {
         Collections.sort(calendarEvents);
         int year = -1;
         int month = -1;
+        int day = -1;
         for (CalendarEvent event : calendarEvents) {
             Calendar cal = Calendar.getInstance();
             cal.setTime(event.startDate);
             if (year != cal.get(Calendar.YEAR)) {
                 event.showHeader = true;
+                event.showDate = true;
                 year = cal.get(Calendar.YEAR);
                 month = cal.get(Calendar.MONTH);
+                day = cal.get(Calendar.DAY_OF_MONTH);
             }
             if (month != cal.get(Calendar.MONTH)) {
                 event.showHeader = true;
+                event.showDate = true;
                 month = cal.get(Calendar.MONTH);
+                day = cal.get(Calendar.DAY_OF_MONTH);
+            }
+            if (day != cal.get(Calendar.DAY_OF_MONTH)) {
+                event.showDate = true;
+                day = cal.get(Calendar.DAY_OF_MONTH);
             }
         }
     }
@@ -152,7 +163,7 @@ public class CalendarManager extends Fragment {
     private void addEventCards(LayoutInflater inflater) {
         LinearLayout scrollView = view.findViewById(R.id.event_list);
         scrollView.removeAllViews();
-        for(CalendarEvent event : calendarEvents) {
+        for(final CalendarEvent event : calendarEvents) {
             View eventCard = inflater.inflate(R.layout.fragment_calendar_event_item, null);
             TextView monthText = eventCard.findViewById(R.id.monthText);
             TextView dateNum = eventCard.findViewById(R.id.dateNum);
@@ -160,7 +171,6 @@ public class CalendarManager extends Fragment {
             TextView titleAndUser = eventCard.findViewById(R.id.titleAndUser);
             TextView timeRange = eventCard.findViewById(R.id.timeRange);
 
-            monthText.setText(new SimpleDateFormat("MMMM").format(event.startDate));
             dateNum.setText(new SimpleDateFormat("d").format(event.startDate));
             dateWeek.setText(new SimpleDateFormat("EEE").format(event.startDate));
             titleAndUser.setText(event.eventName + " - " + event.userCreated);
@@ -171,6 +181,13 @@ public class CalendarManager extends Fragment {
             Calendar cEnd = Calendar.getInstance();
             cStart.setTime(event.startDate);
             cEnd.setTime(event.endDate);
+
+            if(cStart.get(Calendar.YEAR) == rightNow.get(Calendar.YEAR)) {
+                monthText.setText(new SimpleDateFormat("MMMM").format(event.startDate));
+            } else {
+                monthText.setText(new SimpleDateFormat("MMMM YYYY").format(event.startDate));
+            }
+
             if(cEnd.DAY_OF_MONTH == cStart.DAY_OF_MONTH && cEnd.YEAR == cStart.YEAR) {
                 endTime = new SimpleDateFormat("h:mm a").format(event.endDate);
             } else {
@@ -181,7 +198,21 @@ public class CalendarManager extends Fragment {
             if(!event.showHeader) {
                 LinearLayout monthHeader = eventCard.findViewById(R.id.monthHeader);
                 monthHeader.setVisibility(View.GONE);
+                monthHeader.setTag("notSticky");
             }
+
+            if(!event.showDate) {
+                LinearLayout dateBox = eventCard.findViewById(R.id.dateBox);
+                dateBox.setVisibility(View.INVISIBLE);
+            }
+
+            eventCard.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Fragment ePage = new EventPage(event);
+                    ((HouseMainActivity) v.getContext()).changeFragments(HouseMainActivity.TAB_CALENDAR, ePage,true);
+                }
+            });
 
             scrollView.addView(eventCard);
         }

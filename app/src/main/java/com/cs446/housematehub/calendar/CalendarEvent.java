@@ -16,6 +16,7 @@ public class CalendarEvent implements Comparable<CalendarEvent>, Serializable {
     public String userCreated;
     // Used for displaying an event
     public boolean showHeader = false;
+    public boolean showDate = false;
 
     public CalendarEvent(int id, String eventName, EventType eventType, NotificationType notificationType, RepeatType repeatType, Date startDate, Date endDate, boolean allDay, String houseName, String userCreated) {
         this.id = id;

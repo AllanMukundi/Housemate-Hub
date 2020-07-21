@@ -191,17 +191,6 @@ public class HouseMainActivity extends LoggedInBaseActivity {
         }
     }
 
-    public void loadFragment(Fragment fragment, String tag, boolean popBackstack) {
-        FragmentManager fm = getSupportFragmentManager();
-        if (popBackstack) {
-            fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        }
-        FragmentTransaction fragmentTransaction = fm.beginTransaction();
-        fragmentTransaction.replace(R.id.house_main_layout, fragment);
-        fragmentTransaction.addToBackStack(tag);
-        fragmentTransaction.commit(); // save the changes
-    }
-
     public void enableBack() {
         backButton.setVisibility(View.VISIBLE);
 

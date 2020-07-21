@@ -30,11 +30,9 @@
     <FrameLayout
         android:id="@+id/house_main_layout"
         android:layout_width="match_parent"
-        android:layout_height="619dp"
-        app:layout_constraintBottom_toBottomOf="@+id/include"
-        app:layout_constraintEnd_toEndOf="@+id/include"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/include">
+        android:layout_height="match_parent"
+        android:layout_marginBottom="56dp"
+        android:layout_marginTop="?attr/actionBarSize">
 
     </FrameLayout>
 
