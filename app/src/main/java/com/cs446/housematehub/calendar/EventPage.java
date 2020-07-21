@@ -1,7 +1,9 @@
 package com.cs446.housematehub.calendar;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,9 +13,9 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -29,12 +31,12 @@ import com.parse.SaveCallback;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
-import androidx.fragment.app.DialogFragment;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 
-public class CalendarDialog extends DialogFragment {
+public class EventPage extends Fragment {
 
     EditText eventName;
     Switch allDaySwitch;
@@ -47,36 +49,37 @@ public class CalendarDialog extends DialogFragment {
     Button dayEndButton;
     Button timeStartButton;
     Button timeEndButton;
+    TextView user;
 
     Calendar start;
     Calendar end;
 
     boolean all_day = false;
 
-    Calendar rightNow;
     final SimpleDateFormat dateFormatter = new SimpleDateFormat("E, MMM dd, yyyy");
     final SimpleDateFormat timeFormatter = new SimpleDateFormat("h:mm a");
 
-    public CalendarDialog() {
+    private CalendarEvent event;
+    private View view;
+
+    public EventPage(CalendarEvent event) {
+        this.event = event;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-    }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        getDialog().getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_calendar_dialog, container, false);
+        // Inflate the layout for this fragment
+        view = inflater.inflate(R.layout.fragment_event_page, container, false);
 
-        rightNow = Calendar.getInstance();
+        ((HouseMainActivity) getActivity()).enableBack();
+        ((HouseMainActivity) getActivity()).setToolbarTitle("Edit Event");
 
         eventName = view.findViewById(R.id.event_name_title);
         eventTypeSpinner = view.findViewById(R.id.event_type_spinner);
@@ -88,22 +91,34 @@ public class CalendarDialog extends DialogFragment {
         eventTypeSpinner = view.findViewById(R.id.event_type_spinner);
         repeatTypeSpinner = view.findViewById(R.id.repeat_type_spinner);
         notificationTypeSpinner = view.findViewById(R.id.notification_type_spinner);
+        user = view.findViewById(R.id.user);
 
-        start = (Calendar) rightNow.clone();
-        start.set(Calendar.MINUTE, 0);
-        dayStartButton.setText(dateFormatter.format(start.getTime()));
-        timeStartButton.setText(timeFormatter.format(start.getTime()));
+        eventName.setText(event.eventName);
+        user.setText("Created By: " + event.userCreated);
 
-        rightNow.add(Calendar.HOUR_OF_DAY, 1);
-        end = (Calendar) rightNow.clone();
-        end.set(Calendar.MINUTE, 0);
-        dayEndButton.setText(dateFormatter.format(end.getTime()));
-        timeEndButton.setText(timeFormatter.format(end.getTime()));
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(event.originalStartDate);
+        start = (Calendar) cal.clone();
+        cal.setTime(event.endDate);
+        end = (Calendar) cal.clone();
 
         initDatePickerListener(dayStartButton, start);
         initDatePickerListener(dayEndButton, end);
         initTimePickerListener(timeStartButton, start);
         initTimePickerListener(timeEndButton, end);
+
+        dayStartButton.setText(dateFormatter.format(start.getTime()));
+        dayEndButton.setText(dateFormatter.format(end.getTime()));
+        timeStartButton.setText(timeFormatter.format(start.getTime()));
+        timeEndButton.setText(timeFormatter.format(end.getTime()));
+
+        initSpinner(EventType.getValues(), eventTypeSpinner);
+        initSpinner(RepeatType.getValues(), repeatTypeSpinner);
+        initSpinner(NotificationType.getValues(), notificationTypeSpinner);
+
+        eventTypeSpinner.setSelection(EventType.getValues().indexOf(event.eventType.getString()));
+        repeatTypeSpinner.setSelection(RepeatType.getValues().indexOf(event.repeatType.getString()));
+        notificationTypeSpinner.setSelection(NotificationType.getValues().indexOf(event.notificationType.getString()));
 
         allDaySwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -119,21 +134,42 @@ public class CalendarDialog extends DialogFragment {
             }
         });
 
-        initSpinner(EventType.getValues(), eventTypeSpinner);
-        initSpinner(RepeatType.getValues(), repeatTypeSpinner);
-        initSpinner(NotificationType.getValues(), notificationTypeSpinner);
+        allDaySwitch.setChecked(event.allDay);
 
-        Button cancelButton = view.findViewById(R.id.cancel_button);
-        Button createButton = view.findViewById(R.id.create_button);
+        Button deleteButton = view.findViewById(R.id.delete_button);
+        Button updateButton = view.findViewById(R.id.update_button);
 
-        cancelButton.setOnClickListener(new View.OnClickListener() {
+        deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dismiss();
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setMessage("Delete the event?")
+                        .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                deleteCalendarEvent();
+                                getActivity().onBackPressed();
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        });
+                final AlertDialog alert = builder.create();
+                alert.setOnShowListener(new DialogInterface.OnShowListener() {
+                    @Override
+                    public void onShow(DialogInterface dialog) {
+                        alert.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(getContext(), R.color.colorDebtRed));
+                        alert.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(getContext(), R.color.colorMaterialBlue));
+                    }
+                });
+                alert.show();
             }
         });
 
-        createButton.setOnClickListener(new View.OnClickListener() {
+        updateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if ((start.compareTo(end) > 0 && !all_day) || (start.compareTo(end) > 0 && all_day && start.get(Calendar.DAY_OF_MONTH) != end.get(Calendar.DAY_OF_MONTH))) {
@@ -141,7 +177,8 @@ public class CalendarDialog extends DialogFragment {
                 } else if (eventName.getText().toString().matches("")) {
                     Toast.makeText(getActivity(), "Event must have a title", Toast.LENGTH_SHORT).show();
                 } else {
-                    createCalendarEvent();
+                    updateCalendarEvent();
+                    getActivity().onBackPressed();
                 }
             }
         });
@@ -188,67 +225,74 @@ public class CalendarDialog extends DialogFragment {
         spinner.setAdapter(adapter);
     }
 
-    public void createCalendarEvent() {
-        List<ParseObject> houseRes = new ArrayList<ParseObject>();
-        ParseObject house;
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("House");
+    private void updateCalendarEvent() {
+        List<ParseObject> eventRes = new ArrayList<ParseObject>();
+        ParseObject event_row;
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Calendar");
         final String houseName = (String) ((HouseMainActivity) getActivity()).getCurrentHouse().get("houseName");
-        final ParseUser currentUser = ((HouseMainActivity) getActivity()).getCurrentUser();
+
         query.whereEqualTo("houseName", houseName);
+        query.whereEqualTo("eventId", event.id);
 
         try {
-            houseRes = query.find();
+            eventRes = query.find();
         } catch (ParseException e) {
             e.printStackTrace();
         }
 
-        if (houseRes.size() == 0) {
-            throw new RuntimeException("House with the given houseName was not found");
+        if (eventRes.size() == 0) {
+            throw new RuntimeException("Event with the given eventId was not found");
         }
 
-        house = houseRes.get(0); // should only be one matching row
-        final int id = (int) house.get("nextEventId");
+        event_row = eventRes.get(0); // should only be one matching row
 
-        final CalendarEvent calendarEvent = new CalendarEvent(
-                id,
-                eventName.getText().toString(),
-                EventType.getEnum(eventTypeSpinner.getSelectedItem().toString()),
-                NotificationType.getEnum(notificationTypeSpinner.getSelectedItem().toString()),
-                RepeatType.getEnum(repeatTypeSpinner.getSelectedItem().toString()),
-                start.getTime(),
-                end.getTime(),
-                all_day,
-                houseName,
-                currentUser.getUsername()
-        );
+        event.eventName = eventName.getText().toString();
+        event.eventType = EventType.getEnum(eventTypeSpinner.getSelectedItem().toString());
+        event.notificationType = NotificationType.getEnum(notificationTypeSpinner.getSelectedItem().toString());
+        event.repeatType = RepeatType.getEnum(repeatTypeSpinner.getSelectedItem().toString());
+        event.startDate = start.getTime();
+        event.endDate = end.getTime();
+        event.allDay = all_day;
 
-        house.put("nextEventId", id + 1);
-        house.saveInBackground(new SaveCallback() {
-            @Override
-            public void done(ParseException e) {
-                ParseObject calendarEntity = new ParseObject("Calendar");
-                calendarEntity.put("eventId", calendarEvent.id);
-                calendarEntity.put("eventName", calendarEvent.eventName);
-                calendarEntity.put("eventType", calendarEvent.eventType.ordinal());
-                calendarEntity.put("notificationType", calendarEvent.notificationType.ordinal());
-                calendarEntity.put("repeatType", calendarEvent.repeatType.ordinal());
-                calendarEntity.put("startDate", calendarEvent.startDate);
-                calendarEntity.put("endDate", calendarEvent.endDate);
-                calendarEntity.put("allDay", calendarEvent.allDay);
-                calendarEntity.put("houseName", calendarEvent.houseName);
-                calendarEntity.put("userCreated", calendarEvent.userCreated);
-                calendarEntity.saveInBackground(new SaveCallback() {
-                    @Override
-                    public void done(ParseException e) {
-                        if (e == null) {
-                            dismiss();
-                        } else {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-            }
-        });
+        event_row.put("eventName", event.eventName);
+        event_row.put("eventType", event.eventType.ordinal());
+        event_row.put("notificationType", event.notificationType.ordinal());
+        event_row.put("repeatType", event.repeatType.ordinal());
+        event_row.put("startDate", event.startDate);
+        event_row.put("endDate", event.endDate);
+        event_row.put("allDay", event.allDay);
+        try {
+            event_row.save();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
 
+    private void deleteCalendarEvent() {
+        List<ParseObject> eventRes = new ArrayList<ParseObject>();
+        ParseObject event_row;
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Calendar");
+        final String houseName = (String) ((HouseMainActivity) getActivity()).getCurrentHouse().get("houseName");
+
+        query.whereEqualTo("houseName", houseName);
+        query.whereEqualTo("eventId", event.id);
+
+        try {
+            eventRes = query.find();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        if (eventRes.size() == 0) {
+            throw new RuntimeException("Event with the given eventId was not found");
+        }
+
+        event_row = eventRes.get(0); // should only be one matching row
+
+        try {
+            event_row.delete();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 }

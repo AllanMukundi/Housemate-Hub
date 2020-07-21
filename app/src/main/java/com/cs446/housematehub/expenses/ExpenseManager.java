@@ -210,7 +210,7 @@ public class ExpenseManager extends Fragment {
                 @Override
                 public void onClick(View v) {
                     Fragment expenseLogFragment = new ExpenseLog(username, color, currentUserName, houseName);
-                    ((HouseMainActivity) v.getContext()).changeFragments(HouseMainActivity.TAB_EXPENSE, expenseLogFragment,true);
+                    ((HouseMainActivity) v.getContext()).changeFragments(HouseMainActivity.TAB_EXPENSE, expenseLogFragment,true, true);
                 }
             });
 

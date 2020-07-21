@@ -2,35 +2,25 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:layout_marginTop="8dp"
-    android:layout_marginBottom="8dp">
+    android:orientation="vertical">
     <LinearLayout
         android:id="@+id/monthHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingBottom="5dp"
+        android:layout_marginBottom="8dp"
         android:background="?android:colorBackground"
         android:tag="sticky">
         <TextView
             android:id="@+id/monthText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textStyle="bold"
             android:textColor="@color/black"
             android:text="July"
             android:layout_marginLeft="16dp"
-            android:paddingBottom="2dp"
             android:textSize="27sp">
         </TextView>
-        <View
-            android:layout_width="match_parent"
-            android:layout_marginRight="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_height="2dp"
-            android:background="@color/black">
-        </View>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -44,6 +34,7 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp">
             <LinearLayout
+                android:id="@+id/dateBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
@@ -54,7 +45,6 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:text="20"
-                    android:textStyle="bold"
                     android:textColor="@color/black"
                     android:textSize="25sp"/>
                 <TextView
