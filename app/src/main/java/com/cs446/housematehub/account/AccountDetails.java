@@ -133,7 +133,7 @@ public class AccountDetails extends Fragment {
                     public void onItemClick(View view, int position) {
                         ParseUser user = mAdapter.getData().get(position);
                         Fragment newAccountDetailsFragment = AccountDetails.newInstance(user.getUsername());
-                        ((HouseMainActivity) getActivity()).loadFragment(newAccountDetailsFragment, "account_fragment_tag_" + user.getUsername(), false);
+                        ((HouseMainActivity) getActivity()).changeFragments(HouseMainActivity.TAB_EXPENSE, newAccountDetailsFragment, true);
                     }
 
                     @Override

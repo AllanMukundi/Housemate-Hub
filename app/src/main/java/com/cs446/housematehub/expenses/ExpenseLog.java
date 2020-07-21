@@ -90,7 +90,7 @@ public class ExpenseLog extends Fragment {
         View.OnClickListener userDetailsListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((HouseMainActivity) getActivity()).loadFragment(AccountDetails.newInstance(userOther), "accountDetails", false);
+                ((HouseMainActivity) getActivity()).changeFragments(HouseMainActivity.TAB_EXPENSE, AccountDetails.newInstance(userOther), true);
             }
         };
         userFromText.setOnClickListener(userDetailsListener);

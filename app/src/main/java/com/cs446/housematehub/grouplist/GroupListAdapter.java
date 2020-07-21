@@ -73,7 +73,7 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.Grou
         holder.listContainer.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Fragment fragment = new GroupListItemManager(listData.get(position).getObjectId());
-                ((HouseMainActivity) view.getContext()).loadFragment(fragment, "groupListDetails", false);
+                ((HouseMainActivity) view.getContext()).changeFragments(HouseMainActivity.TAB_LIST, fragment,true);
             }
         });
 
