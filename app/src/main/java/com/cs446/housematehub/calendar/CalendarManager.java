@@ -110,7 +110,7 @@ public class CalendarManager extends Fragment {
             List<ParseObject> eventList = query.find();
             for(ParseObject e : eventList) {
                 CalendarEvent event = new CalendarEvent(
-                        e.getInt("id"),
+                        e.getInt("eventId"),
                         e.getString("eventName"),
                         EventType.getEnum(e.getInt("eventType")),
                         NotificationType.getEnum(e.getInt("notificationType")),
@@ -121,6 +121,7 @@ public class CalendarManager extends Fragment {
                         e.getString("houseName"),
                         e.getString("userCreated")
                 );
+                event.originalStartDate = e.getDate("startDate");
                 calendarEvents.add(event);
                 Calendar c = Calendar.getInstance();
                 c.setTime(e.getDate("startDate"));
@@ -193,7 +194,13 @@ public class CalendarManager extends Fragment {
             } else {
                 endTime = new SimpleDateFormat("MMM d h:mm a").format(event.endDate);
             }
-            timeRange.setText(startTime + " - " + endTime);
+
+            if(event.allDay) {
+                timeRange.setText("All Day");
+            } else {
+                timeRange.setText(startTime + " - " + endTime);
+            }
+
 
             if(!event.showHeader) {
                 LinearLayout monthHeader = eventCard.findViewById(R.id.monthHeader);
@@ -210,7 +217,7 @@ public class CalendarManager extends Fragment {
                 @Override
                 public void onClick(View v) {
                     Fragment ePage = new EventPage(event);
-                    ((HouseMainActivity) v.getContext()).changeFragments(HouseMainActivity.TAB_CALENDAR, ePage,true);
+                    ((HouseMainActivity) v.getContext()).changeFragments(HouseMainActivity.TAB_CALENDAR, ePage,true, true);
                 }
             });
 

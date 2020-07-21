@@ -136,7 +136,7 @@ public class CalendarDialog extends DialogFragment {
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (start.compareTo(end) > 0) {
+                if ((start.compareTo(end) > 0 && !all_day) || (start.compareTo(end) > 0 && all_day && start.get(Calendar.DAY_OF_MONTH) != end.get(Calendar.DAY_OF_MONTH))) {
                     Toast.makeText(getActivity(), "Event start time must be before end time", Toast.LENGTH_LONG).show();
                 } else if (eventName.getText().toString().matches("")) {
                     Toast.makeText(getActivity(), "Event must have a title", Toast.LENGTH_SHORT).show();

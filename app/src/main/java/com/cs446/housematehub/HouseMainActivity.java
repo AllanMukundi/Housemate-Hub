@@ -111,23 +111,28 @@ public class HouseMainActivity extends LoggedInBaseActivity {
 
         if(mStacks.get(tabId).size() == 0){
             if(tabId.equals(TAB_DASHBOARD)){
-                changeFragments(tabId, new DashboardManager(),true);
+                changeFragments(tabId, new DashboardManager(),true, false);
             }else if(tabId.equals(TAB_EXPENSE)){
-                changeFragments(tabId, new ExpenseManager(),true);
+                changeFragments(tabId, new ExpenseManager(),true, false);
             }else if(tabId.equals(TAB_CALENDAR)){
-                changeFragments(tabId, new CalendarManager(),true);
+                changeFragments(tabId, new CalendarManager(),true, false);
             }else if(tabId.equals(TAB_LIST)){
-                changeFragments(tabId, new GroupListManager(),true);
+                changeFragments(tabId, new GroupListManager(),true, false);
             }
         }else {
-            changeFragments(tabId, mStacks.get(tabId).lastElement(),false);
+            changeFragments(tabId, mStacks.get(tabId).lastElement(),false, false);
         }
     }
 
-    public void changeFragments(String tag, Fragment fragment, boolean shouldAdd){
+    public void changeFragments(String tag, Fragment fragment, boolean shouldAdd, boolean animate){
         if(shouldAdd) mStacks.get(tag).push(fragment);
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction ft = manager.beginTransaction();
+        if (shouldAdd && animate) {
+            ft.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
+        } else if (animate) {
+            ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_left);
+        }
         ft.replace(R.id.house_main_layout, fragment);
         ft.commit();
     }
@@ -139,7 +144,7 @@ public class HouseMainActivity extends LoggedInBaseActivity {
         /*pop current fragment from stack.. */
         mStacks.get(mCurrentTab).pop();
 
-        changeFragments(null, fragment, false);
+        changeFragments(null, fragment, false, true);
     }
 
     @Override

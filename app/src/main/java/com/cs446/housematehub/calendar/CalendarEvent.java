@@ -1,6 +1,7 @@
 package com.cs446.housematehub.calendar;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.Date;
 
 public class CalendarEvent implements Comparable<CalendarEvent>, Serializable {
@@ -9,6 +10,7 @@ public class CalendarEvent implements Comparable<CalendarEvent>, Serializable {
     public EventType eventType;
     public NotificationType notificationType;
     public RepeatType repeatType;
+    public Date originalStartDate;
     public Date startDate;
     public Date endDate;
     public boolean allDay;
@@ -33,6 +35,20 @@ public class CalendarEvent implements Comparable<CalendarEvent>, Serializable {
 
     @Override
     public int compareTo(CalendarEvent e) {
+        Calendar cThis = Calendar.getInstance();
+        Calendar cE = Calendar.getInstance();
+        cThis.setTime(this.startDate);
+        cE.setTime(e.startDate);
+
+        if (cThis.get(Calendar.DAY_OF_MONTH) == cE.get(Calendar.DAY_OF_MONTH) && cThis.get(Calendar.YEAR) == cE.get(Calendar.YEAR)) {
+            if (this.allDay && e.allDay) {
+                return 0;
+            } else if(this.allDay) {
+                return -1;
+            } else if(e.allDay) {
+                return 1;
+            }
+        }
         return this.startDate.compareTo(e.startDate);
     }
 }
