@@ -1,5 +1,9 @@
 package com.cs446.housematehub;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -10,6 +14,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -21,6 +27,7 @@ import com.cs446.housematehub.expenses.ExpenseManager;
 import com.cs446.housematehub.grouplist.GroupListManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.ParseException;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -29,6 +36,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import com.parse.ParsePush;
 
 public class HouseMainActivity extends LoggedInBaseActivity {
 
@@ -44,6 +55,8 @@ public class HouseMainActivity extends LoggedInBaseActivity {
 
     private HashMap<String, Stack<Fragment>> mStacks;
     private String mCurrentTab;
+
+    public static final String MAIN_CHANNEL_ID = "main_channel";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +91,8 @@ public class HouseMainActivity extends LoggedInBaseActivity {
         mStacks.put(TAB_LIST, new Stack<Fragment>());
 
         bottomNavigation.setOnNavigationItemSelectedListener(navListener);
+
+        createNotificationChannels(currentUser.getUsername());
     }
 
     BottomNavigationView.OnNavigationItemSelectedListener navListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -214,6 +229,32 @@ public class HouseMainActivity extends LoggedInBaseActivity {
 
     public void setToolbarTitle(String text) {
         toolbarTitle.setText(text);
+    }
+
+    private void displayNotification(List<String> mList){
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, MAIN_CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_baseline_home_24)
+                .setContentTitle("My notification")
+                .setContentText(mList.get(0) + mList.get(1))
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
+        notificationManagerCompat.notify(1, builder.build());
+    }
+
+    private void createNotificationChannels(String username) {
+        // creates main channel that everyone is subscribed to
+        NotificationChannel mainChannel = new NotificationChannel(MAIN_CHANNEL_ID, MAIN_CHANNEL_ID, NotificationManager.IMPORTANCE_DEFAULT);
+        mainChannel.setDescription("Main Channel that every user is subscribed to.");
+        NotificationManager manager = getSystemService(NotificationManager.class);
+        manager.createNotificationChannel(mainChannel);
+        ParsePush.subscribeInBackground(MAIN_CHANNEL_ID);
+
+        // creates channel that current user is subscribed to
+        NotificationChannel currentUserChannel = new NotificationChannel(username, username, NotificationManager.IMPORTANCE_DEFAULT);
+        currentUserChannel.setDescription("Channel that only current user is subscribed to.");
+        manager.createNotificationChannel(currentUserChannel);
+        ParsePush.subscribeInBackground(username);
     }
 }
 

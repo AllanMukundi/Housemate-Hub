@@ -3,6 +3,7 @@ package com.cs446.housematehub;
 import android.app.Application;
 
 import com.parse.Parse;
+import com.parse.ParseInstallation;
 
 public class App extends Application {
 
@@ -15,6 +16,9 @@ public class App extends Application {
                 .server(getString(R.string.back4app_server_url))
                 .build()
         );
+        ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+        installation.put("GCMSenderId", "916870237292");
+        installation.saveInBackground();
     }
 
 }

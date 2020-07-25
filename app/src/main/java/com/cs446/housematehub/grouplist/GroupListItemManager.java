@@ -24,13 +24,17 @@ import com.google.gson.reflect.TypeToken;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParsePush;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -56,6 +60,9 @@ public class GroupListItemManager extends Fragment implements GroupListItemAdapt
     private EditText listItemTitle;
     private ImageButton listItemAdd;
 
+    static private ParseUser currentUser = ParseUser.getCurrentUser();
+    static private String currentUserName = currentUser.getUsername();
+    private List<ParseObject> users = new ArrayList<>();
 
     public GroupListItemManager(String lObjectId) {
         objectId = lObjectId;
@@ -138,7 +145,7 @@ public class GroupListItemManager extends Fragment implements GroupListItemAdapt
         GroupList.GroupListItem listItem = new GroupList.GroupListItem(listItemTitle.getText().toString(), false);
         listData.add(listItem);
 
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("GroupList");;
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("GroupList");
 
         Gson gson = new Gson();
         JsonElement listDataJsonElement = gson.toJsonTree(listData, new TypeToken<List<GroupList.GroupListItem>>() {}.getType());
@@ -161,6 +168,34 @@ public class GroupListItemManager extends Fragment implements GroupListItemAdapt
                     }
                 }
             });
+            //parse notification
+            JSONObject data = new JSONObject();
+
+            String titleText = "Changes were made to " + listTitle + " list.";
+            String alertText = listItem.title + " was added by " + currentUserName + ".";
+            // Put data in the JSON object
+            try {
+                data.put("alert", alertText);
+                data.put("title", titleText);
+            } catch ( JSONException e) {
+                // should not happen
+                throw new IllegalArgumentException("unexpected parsing error", e);
+            }
+
+            users = ((HouseMainActivity) getActivity()).getHouseUsers(false);
+            Boolean isSubscribed = groupListResult.get(0).getBoolean("groupListSubscription");
+
+            if (isSubscribed) {
+                for (ParseObject user : users) {
+                    String username = user.get("username").toString();
+                    // Configure the push
+                    ParsePush push = new ParsePush();
+                    push.setChannel(username);
+                    push.setData(data);
+                    push.sendInBackground();
+                }
+            }
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
