@@ -1,5 +1,7 @@
 package com.cs446.housematehub;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,6 +26,7 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.ParsePush;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,6 +47,8 @@ public class HouseMainActivity extends LoggedInBaseActivity {
 
     private HashMap<String, Stack<Fragment>> mStacks;
     private String mCurrentTab;
+
+    public static final String MAIN_CHANNEL_ID = "main_channel";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +83,8 @@ public class HouseMainActivity extends LoggedInBaseActivity {
         mStacks.put(TAB_LIST, new Stack<Fragment>());
 
         bottomNavigation.setOnNavigationItemSelectedListener(navListener);
+
+        createNotificationChannels(currentUser.getUsername());
     }
 
     BottomNavigationView.OnNavigationItemSelectedListener navListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -214,6 +221,22 @@ public class HouseMainActivity extends LoggedInBaseActivity {
 
     public void setToolbarTitle(String text) {
         toolbarTitle.setText(text);
+    }
+
+
+    private void createNotificationChannels(String username) {
+        // creates main channel that everyone is subscribed to
+        NotificationChannel mainChannel = new NotificationChannel(MAIN_CHANNEL_ID, MAIN_CHANNEL_ID, NotificationManager.IMPORTANCE_DEFAULT);
+        mainChannel.setDescription("Main Channel that every user is subscribed to.");
+        NotificationManager manager = getSystemService(NotificationManager.class);
+        manager.createNotificationChannel(mainChannel);
+        ParsePush.subscribeInBackground(MAIN_CHANNEL_ID);
+
+        // creates channel that only current user is subscribed to
+        NotificationChannel currentUserChannel = new NotificationChannel(username, username, NotificationManager.IMPORTANCE_DEFAULT);
+        currentUserChannel.setDescription("Channel that only current user is subscribed to.");
+        manager.createNotificationChannel(currentUserChannel);
+        ParsePush.subscribeInBackground(username);
     }
 }
 

@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "916870237292",
+    "firebase_url": "https://back4app-push-notificati-804ba.firebaseio.com",
+    "project_id": "back4app-push-notificati-804ba",
+    "storage_bucket": "back4app-push-notificati-804ba.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:916870237292:android:e1f575dba3da93361f9c49",
+        "android_client_info": {
+          "package_name": "com.cs446.housematehub"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "916870237292-1unimsfa65gvksco31h74fpifvqc24dd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtvvGQifluFN9shtDCKvQtmrN_5LG0izY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "916870237292-1unimsfa65gvksco31h74fpifvqc24dd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
