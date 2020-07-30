@@ -139,6 +139,11 @@ public class ExpenseDialog extends DialogFragment implements AdapterView.OnItemS
                     Toast.makeText(getActivity(), "Division must equal the total amount", Toast.LENGTH_SHORT).show();
                 } else {
                     commitExpense();
+
+                    //notify other housemates
+                    String titleText = "New expense " + '"'+ expenseTitle.getText().toString() + '"'+ ".";
+                    String alertText = expenseAmount.getText() + " was paid by " + payer + ".";
+                    ((HouseMainActivity) getActivity()).sendNotifications(alertText, titleText);
                 }
             }
         });

@@ -31,8 +31,12 @@ import com.cs446.housematehub.common.RecyclerItemClickListener;
 import com.cs446.housematehub.common.ViewUtils;
 import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParsePush;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,6 +60,7 @@ public class AccountDetails extends Fragment {
     private TextView mGroupNameTextView;
     private TextView mGroupCodeTextView;
     private TextView mLogOutTextView;
+    private List<ParseObject> users = new ArrayList<>();
 
     public static AccountDetails newInstance(String userName) {
         AccountDetails accountDetailsFragment = new AccountDetails();
@@ -174,6 +179,13 @@ public class AccountDetails extends Fragment {
                 mUser.put("do_not_disturb", isChecked);
                 mUser.saveInBackground();
                 Toast.makeText(getContext(), "Do not disturb is turned " + (isChecked ? "on" : "off"), Toast.LENGTH_SHORT).show();
+
+                //notify other housemates
+                if (isChecked) {
+                    String titleText = "Do Not Disturb was enabled for " + mUser.getUsername();
+                    String alertText = "Please avoid contacting them until Do Not Disturb is disabled.";
+                    ((HouseMainActivity) getActivity()).sendNotifications(alertText, titleText);
+                }
             }
         });
     }

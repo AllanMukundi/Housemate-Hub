@@ -28,6 +28,9 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.ParsePush;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -237,6 +240,32 @@ public class HouseMainActivity extends LoggedInBaseActivity {
         currentUserChannel.setDescription("Channel that only current user is subscribed to.");
         manager.createNotificationChannel(currentUserChannel);
         ParsePush.subscribeInBackground(username);
+    }
+
+    public void sendNotifications(String alertText, String titleText) {
+        List<ParseObject> users = getHouseUsers(false);
+
+        //parse notification
+        JSONObject data = new JSONObject();
+
+        // Put data in the JSON object
+        try {
+            data.put("alert", alertText);
+            data.put("title", titleText);
+        } catch ( JSONException e) {
+            // should not happen
+            throw new IllegalArgumentException("unexpected parsing error", e);
+        }
+
+        for (ParseObject user : users) {
+            String username = user.get("username").toString();
+            // Configure the push
+            ParsePush push = new ParsePush();
+            push.setChannel(username);
+            push.setData(data);
+            push.sendInBackground();
+        }
+
     }
 }
 
