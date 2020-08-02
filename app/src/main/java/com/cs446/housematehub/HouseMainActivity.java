@@ -142,27 +142,26 @@ public class HouseMainActivity extends LoggedInBaseActivity {
         }
     };
 
-    public void selectedTab(String tabId)
-    {
+    public void selectedTab(String tabId) {
         mCurrentTab = tabId;
 
-        if(mStacks.get(tabId).size() == 0){
-            if(tabId.equals(TAB_DASHBOARD)){
-                changeFragments(tabId, new DashboardManager(),true, false);
-            }else if(tabId.equals(TAB_EXPENSE)){
-                changeFragments(tabId, new ExpenseManager(),true, false);
-            }else if(tabId.equals(TAB_CALENDAR)){
-                changeFragments(tabId, new CalendarManager(),true, false);
-            }else if(tabId.equals(TAB_LIST)){
-                changeFragments(tabId, new GroupListManager(),true, false);
+        if (mStacks.get(tabId).size() == 0) {
+            if (tabId.equals(TAB_DASHBOARD)) {
+                changeFragments(tabId, new DashboardManager(), true, false);
+            } else if (tabId.equals(TAB_EXPENSE)) {
+                changeFragments(tabId, new ExpenseManager(), true, false);
+            } else if (tabId.equals(TAB_CALENDAR)) {
+                changeFragments(tabId, new CalendarManager(), true, false);
+            } else if (tabId.equals(TAB_LIST)) {
+                changeFragments(tabId, new GroupListManager(), true, false);
             }
-        }else {
-            changeFragments(tabId, mStacks.get(tabId).lastElement(),false, false);
+        } else {
+            changeFragments(tabId, mStacks.get(tabId).lastElement(), false, false);
         }
     }
 
-    public void changeFragments(String tag, Fragment fragment, boolean shouldAdd, boolean animate){
-        if(shouldAdd) mStacks.get(tag).push(fragment);
+    public void changeFragments(String tag, Fragment fragment, boolean shouldAdd, boolean animate) {
+        if (shouldAdd) mStacks.get(tag).push(fragment);
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction ft = manager.beginTransaction();
         if (shouldAdd && animate) {
@@ -174,7 +173,7 @@ public class HouseMainActivity extends LoggedInBaseActivity {
         ft.commit();
     }
 
-    public void popFragments(){
+    public void popFragments() {
         //Select the second last fragment in current tab's stack..
         Fragment fragment = mStacks.get(mCurrentTab).elementAt(mStacks.get(mCurrentTab).size() - 2);
 
@@ -186,7 +185,7 @@ public class HouseMainActivity extends LoggedInBaseActivity {
 
     @Override
     public void onBackPressed() {
-        if(mStacks.get(mCurrentTab).size() == 1){
+        if (mStacks.get(mCurrentTab).size() == 1) {
             // We are already showing first fragment of current tab, so when back pressed, we will finish this activity..
             finish();
             return;
@@ -279,7 +278,7 @@ public class HouseMainActivity extends LoggedInBaseActivity {
         try {
             data.put("alert", alertText);
             data.put("title", titleText);
-        } catch ( JSONException e) {
+        } catch (JSONException e) {
             // should not happen
             throw new IllegalArgumentException("unexpected parsing error", e);
         }
@@ -296,13 +295,13 @@ public class HouseMainActivity extends LoggedInBaseActivity {
     }
 
     public void scheduleNotification(String alert, String title, long futureInMillis) {
-        Intent notificationIntent = new Intent( this, NotificationPublisher.class );
+        Intent notificationIntent = new Intent(this, NotificationPublisher.class);
         notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ALERT, alert);
         notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_TITLE, title);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast ( this, 0 , notificationIntent , PendingIntent.FLAG_UPDATE_CURRENT );
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE );
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         assert alarmManager != null;
-        alarmManager.set(AlarmManager.RTC_WAKEUP , futureInMillis , pendingIntent);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, futureInMillis, pendingIntent);
     }
 
 }
