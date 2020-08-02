@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.cs446.housematehub.HouseMainActivity;
 import com.cs446.housematehub.R;
+import com.cs446.housematehub.common.NotificationPublisher;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -31,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import androidx.fragment.app.DialogFragment;
 
@@ -142,6 +144,31 @@ public class CalendarDialog extends DialogFragment {
                     Toast.makeText(getActivity(), "Event must have a title", Toast.LENGTH_SHORT).show();
                 } else {
                     createCalendarEvent();
+
+                    //notify other housemates
+                    NotificationType nt = NotificationType.getEnum(notificationTypeSpinner.getSelectedItem().toString());
+                    if (nt != NotificationType.NO_NOTIFICATION) {
+                        long advanceTime = 0;
+                        switch(nt) {
+                            case FIVE_MIN:
+                                advanceTime = TimeUnit.MINUTES.toMillis(5);
+                                break;
+                            case THIRTY_MIN:
+                                advanceTime = TimeUnit.MINUTES.toMillis(30);
+                                break;
+                            case ONE_HOUR:
+                                TimeUnit.HOURS.toMillis(1);
+                                break;
+                            case ONE_DAY:
+                                advanceTime = TimeUnit.DAYS.toMillis(1);
+                                break;
+                        }
+
+                        long reminderTime = start.getTimeInMillis() - advanceTime;
+                        String title = "Reminder for " + eventTypeSpinner.getSelectedItem().toString().toLowerCase() + " \"" + eventName.getText().toString() + '"'+ ".";
+                        String alert = "Starts in " + nt.getString() + ".";
+                        ((HouseMainActivity) getActivity()).scheduleNotification(alert, title, reminderTime);
+                    }
                 }
             }
         });

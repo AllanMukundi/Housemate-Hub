@@ -1,7 +1,11 @@
 package com.cs446.housematehub;
 
+import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,6 +22,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.cs446.housematehub.calendar.CalendarManager;
 import com.cs446.housematehub.account.AccountDetails;
+import com.cs446.housematehub.common.NotificationPublisher;
 import com.cs446.housematehub.dashboard.DashboardManager;
 import com.cs446.housematehub.expenses.ExpenseManager;
 import com.cs446.housematehub.grouplist.GroupListManager;
@@ -267,5 +272,16 @@ public class HouseMainActivity extends LoggedInBaseActivity {
         }
 
     }
+
+    public void scheduleNotification(String alert, String title, long futureInMillis) {
+        Intent notificationIntent = new Intent( this, NotificationPublisher.class );
+        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ALERT, alert);
+        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_TITLE, title);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast ( this, 0 , notificationIntent , PendingIntent.FLAG_UPDATE_CURRENT );
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE );
+        assert alarmManager != null;
+        alarmManager.set(AlarmManager.RTC_WAKEUP , futureInMillis , pendingIntent);
+    }
+
 }
 
