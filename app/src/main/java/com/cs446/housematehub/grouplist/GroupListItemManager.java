@@ -61,8 +61,6 @@ public class GroupListItemManager extends Fragment implements GroupListItemAdapt
     private ImageButton listItemAdd;
 
     static private ParseUser currentUser = ParseUser.getCurrentUser();
-    static private String currentUserName = currentUser.getUsername();
-    private List<ParseObject> users = new ArrayList<>();
 
     public GroupListItemManager(String lObjectId) {
         objectId = lObjectId;
@@ -168,32 +166,14 @@ public class GroupListItemManager extends Fragment implements GroupListItemAdapt
                     }
                 }
             });
-            //parse notification
-            JSONObject data = new JSONObject();
 
             String titleText = "Changes were made to " + listTitle + " list.";
-            String alertText = listItem.title + " was added by " + currentUserName + ".";
-            // Put data in the JSON object
-            try {
-                data.put("alert", alertText);
-                data.put("title", titleText);
-            } catch ( JSONException e) {
-                // should not happen
-                throw new IllegalArgumentException("unexpected parsing error", e);
-            }
+            String alertText = listItem.title + " was added by " + currentUser.getUsername() + ".";
 
-            users = ((HouseMainActivity) getActivity()).getHouseUsers(false);
             Boolean isSubscribed = groupListResult.get(0).getBoolean("groupListSubscription");
 
             if (isSubscribed) {
-                for (ParseObject user : users) {
-                    String username = user.get("username").toString();
-                    // Configure the push
-                    ParsePush push = new ParsePush();
-                    push.setChannel(username);
-                    push.setData(data);
-                    push.sendInBackground();
-                }
+                ((HouseMainActivity) getActivity()).sendNotifications(alertText, titleText);
             }
 
         } catch (JSONException e) {

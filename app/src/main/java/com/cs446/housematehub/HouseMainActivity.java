@@ -1,7 +1,11 @@
 package com.cs446.housematehub;
 
+import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,6 +22,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.cs446.housematehub.calendar.CalendarManager;
 import com.cs446.housematehub.account.AccountDetails;
+import com.cs446.housematehub.common.NotificationPublisher;
 import com.cs446.housematehub.dashboard.DashboardManager;
 import com.cs446.housematehub.expenses.ExpenseManager;
 import com.cs446.housematehub.grouplist.GroupListManager;
@@ -27,6 +32,9 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.ParsePush;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -238,5 +246,42 @@ public class HouseMainActivity extends LoggedInBaseActivity {
         manager.createNotificationChannel(currentUserChannel);
         ParsePush.subscribeInBackground(username);
     }
+
+    public void sendNotifications(String alertText, String titleText) {
+        List<ParseObject> users = getHouseUsers(false);
+
+        //parse notification
+        JSONObject data = new JSONObject();
+
+        // Put data in the JSON object
+        try {
+            data.put("alert", alertText);
+            data.put("title", titleText);
+        } catch ( JSONException e) {
+            // should not happen
+            throw new IllegalArgumentException("unexpected parsing error", e);
+        }
+
+        for (ParseObject user : users) {
+            String username = user.get("username").toString();
+            // Configure the push
+            ParsePush push = new ParsePush();
+            push.setChannel(username);
+            push.setData(data);
+            push.sendInBackground();
+        }
+
+    }
+
+    public void scheduleNotification(String alert, String title, long futureInMillis) {
+        Intent notificationIntent = new Intent( this, NotificationPublisher.class );
+        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ALERT, alert);
+        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_TITLE, title);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast ( this, 0 , notificationIntent , PendingIntent.FLAG_UPDATE_CURRENT );
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE );
+        assert alarmManager != null;
+        alarmManager.set(AlarmManager.RTC_WAKEUP , futureInMillis , pendingIntent);
+    }
+
 }
 
