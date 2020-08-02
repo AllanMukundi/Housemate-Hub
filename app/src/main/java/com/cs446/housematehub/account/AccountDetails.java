@@ -24,7 +24,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.cs446.housematehub.HouseMainActivity;
-import com.cs446.housematehub.HousematesListAdapter;
 import com.cs446.housematehub.LoggedInBaseActivity;
 import com.cs446.housematehub.R;
 import com.cs446.housematehub.common.RecyclerItemClickListener;

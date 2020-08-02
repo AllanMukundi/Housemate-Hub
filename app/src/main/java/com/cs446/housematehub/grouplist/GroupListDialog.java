@@ -18,6 +18,7 @@ import com.cs446.housematehub.R;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import java.util.ArrayList;
@@ -133,6 +134,7 @@ public class GroupListDialog extends DialogFragment {
                 groupListEntity.put("groupListDescription", groupList.description);
                 groupListEntity.put("groupListSubscription", groupList.isSubscribed);
                 groupListEntity.put("listItems", groupList.listItems);
+                groupListEntity.put("owner", ParseUser.getCurrentUser().getUsername());
                 groupListEntity.saveInBackground(new SaveCallback() {
                     @Override
                     public void done(ParseException e) {

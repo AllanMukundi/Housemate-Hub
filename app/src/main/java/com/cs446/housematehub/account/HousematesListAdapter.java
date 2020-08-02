@@ -1,4 +1,4 @@
-package com.cs446.housematehub;
+package com.cs446.housematehub.account;
 
 import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.cs446.housematehub.R;
 import com.parse.ParseUser;
 
 import java.lang.ref.WeakReference;

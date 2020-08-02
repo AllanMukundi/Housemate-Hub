@@ -22,4 +22,6 @@
     <string name="log_out">Log Out</string>
     <string name="housemates">Housemates</string>
     <string name="log_out_successful">Log Out Successful</string>
+    <string name="Recent">Recent</string>
+    <string name="Upcoming">Upcoming</string>
 </resources>
