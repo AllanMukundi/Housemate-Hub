@@ -19,22 +19,20 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+
 import com.cs446.housematehub.HouseMainActivity;
 import com.cs446.housematehub.R;
+import com.cs446.housematehub.account.AccountDetails;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
-import com.parse.SaveCallback;
-
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
 
 public class EventPage extends Fragment {
 
@@ -95,6 +93,15 @@ public class EventPage extends Fragment {
 
         eventName.setText(event.eventName);
         user.setText("Created By: " + event.userCreated);
+        user.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                ((HouseMainActivity)getActivity()).changeFragments(
+                        HouseMainActivity.TAB_CALENDAR,
+                        AccountDetails.newInstance(event.userCreated),
+                        true, true);
+            }
+        });
 
         Calendar cal = Calendar.getInstance();
         cal.setTime(event.originalStartDate);

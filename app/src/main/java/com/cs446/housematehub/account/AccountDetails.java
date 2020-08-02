@@ -67,6 +67,8 @@ public class AccountDetails extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        ((HouseMainActivity) getActivity()).enableBack();
+        ((HouseMainActivity) getActivity()).setToolbarTitle("Account");
         return inflater.inflate(R.layout.fragment_account_details, container, false);
     }
 
