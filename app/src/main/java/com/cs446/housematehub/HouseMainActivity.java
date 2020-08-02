@@ -17,16 +17,16 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.cs446.housematehub.calendar.CalendarManager;
-import com.cs446.housematehub.account.AccountDetails;
+import com.cs446.housematehub.common.Utils;
 import com.cs446.housematehub.dashboard.DashboardManager;
 import com.cs446.housematehub.expenses.ExpenseManager;
 import com.cs446.housematehub.grouplist.GroupListManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParsePush;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
-import com.parse.ParsePush;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,6 +39,7 @@ public class HouseMainActivity extends LoggedInBaseActivity {
     private ParseObject currentHouse;
     private TextView toolbarTitle;
     private ImageButton backButton;
+    private BottomNavigationView bottomNavigation;
 
     public static final String TAB_DASHBOARD = "tab_dashboard";
     public static final String TAB_EXPENSE = "tab_expense";
@@ -72,7 +73,7 @@ public class HouseMainActivity extends LoggedInBaseActivity {
         String houseName = currentUser.get("houseName").toString();
         currentHouse = getCurrentHouse(houseName);
 
-        BottomNavigationView bottomNavigation = findViewById(R.id.navigationView);
+        bottomNavigation = findViewById(R.id.navigationView);
         bottomNavigation.bringToFront();
         bottomNavigation.setSelectedItemId(R.id.nav_home);
 
@@ -85,6 +86,27 @@ public class HouseMainActivity extends LoggedInBaseActivity {
         bottomNavigation.setOnNavigationItemSelectedListener(navListener);
 
         createNotificationChannels(currentUser.getUsername());
+
+        selectedTab(TAB_DASHBOARD);
+    }
+
+    public void switchToTab(String tabId) {
+        View v = null;
+        switch (tabId) {
+            case TAB_DASHBOARD:
+                v = bottomNavigation.findViewById(R.id.nav_home);
+                break;
+            case TAB_EXPENSE:
+                v = bottomNavigation.findViewById(R.id.nav_expenses);
+                break;
+            case TAB_CALENDAR:
+                v = bottomNavigation.findViewById(R.id.nav_calendar);
+                break;
+            case TAB_LIST:
+                v = bottomNavigation.findViewById(R.id.nav_lists);
+                break;
+        }
+        v.performClick();
     }
 
     BottomNavigationView.OnNavigationItemSelectedListener navListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -112,7 +134,7 @@ public class HouseMainActivity extends LoggedInBaseActivity {
         }
     };
 
-    private void selectedTab(String tabId)
+    public void selectedTab(String tabId)
     {
         mCurrentTab = tabId;
 

@@ -1,10 +1,13 @@
-package com.cs446.housematehub;
+package com.cs446.housematehub.common;
 
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+
+import java.util.Calendar;
+import java.util.Date;
 
 public final class Utils {
 
@@ -33,5 +36,13 @@ public final class Utils {
         ViewGroup.LayoutParams params = myListView.getLayoutParams();
         params.height = (totalHeight + (myListView.getDividerHeight() * (adapterCount)));
         myListView.setLayoutParams(params);
+    }
+
+    public static Date oneDayAgo() {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        int daysAgo = 1;
+        cal.add(Calendar.DATE, -daysAgo);
+        return cal.getTime();
     }
 }

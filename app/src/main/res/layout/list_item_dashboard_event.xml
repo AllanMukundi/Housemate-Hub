@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:clickable="true"
+    android:focusable="true"
+    tools:ignore="UseCompoundDrawables">
+
+    <ImageView
+        android:id="@+id/event_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/account_details_row_margin_side"
+        android:layout_gravity="center_vertical"
+        app:srcCompat="@drawable/user_colored_circle_40"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:paddingLeft="@dimen/account_details_row_margin_side"
+        android:layout_gravity="center_vertical"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/event_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/account_details_row_text_size"
+            android:textColor="@color/black"
+            android:layout_gravity="center_vertical"
+            tools:text="Soap added to Shopping List"/>
+
+        <TextView
+            android:id="@+id/event_owner_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/account_details_row_text_size"
+            android:textColor="@color/black"
+            android:layout_gravity="center_vertical"
+            tools:text="by Sarah"/>
+
+    </LinearLayout>
+
+</LinearLayout>

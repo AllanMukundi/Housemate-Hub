@@ -21,7 +21,7 @@ import androidx.fragment.app.Fragment;
 import com.blackcat.currencyedittext.CurrencyEditText;
 import com.cs446.housematehub.HouseMainActivity;
 import com.cs446.housematehub.R;
-import com.cs446.housematehub.Utils;
+import com.cs446.housematehub.common.Utils;
 import com.cs446.housematehub.account.AccountDetails;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
