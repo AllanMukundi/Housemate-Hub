@@ -30,12 +30,8 @@ import com.cs446.housematehub.common.RecyclerItemClickListener;
 import com.cs446.housematehub.common.ViewUtils;
 import com.parse.ParseException;
 import com.parse.ParseObject;
-import com.parse.ParsePush;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +55,6 @@ public class AccountDetails extends Fragment {
     private TextView mGroupNameTextView;
     private TextView mGroupCodeTextView;
     private TextView mLogOutTextView;
-    private List<ParseObject> users = new ArrayList<>();
 
     public static AccountDetails newInstance(String userName) {
         AccountDetails accountDetailsFragment = new AccountDetails();
@@ -72,6 +67,8 @@ public class AccountDetails extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        ((HouseMainActivity) getActivity()).enableBack();
+        ((HouseMainActivity) getActivity()).setToolbarTitle("Account");
         return inflater.inflate(R.layout.fragment_account_details, container, false);
     }
 

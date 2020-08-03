@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,11 +15,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.cs446.housematehub.HouseMainActivity;
 import com.cs446.housematehub.R;
+import com.cs446.housematehub.account.AccountDetails;
 import com.cs446.housematehub.calendar.EventType;
 import com.cs446.housematehub.common.RecyclerItemClickListener;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -35,6 +38,7 @@ public class DashboardManager extends Fragment {
 
     private ParseObject mHouse;
 
+    private ImageView mAccountButton;
     private RecyclerView mRecentRecyclerView;
     private RecyclerView mUpcomingRecyclerView;
     private DashboardEventAdapter mRecentEventsAdapter;
@@ -43,6 +47,8 @@ public class DashboardManager extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        ((HouseMainActivity) getActivity()).disableBack();
+        ((HouseMainActivity) getActivity()).setToolbarTitle("Housemate Hub");
         return inflater.inflate(R.layout.fragment_dashboard, container, false);
     }
 
@@ -183,6 +189,7 @@ public class DashboardManager extends Fragment {
     private void initialiseViews(View rootView) {
         mRecentRecyclerView = rootView.findViewById(R.id.recent_events_recyclerview);
         mUpcomingRecyclerView = rootView.findViewById(R.id.upcoming_events_recyclerview);
+        mAccountButton = rootView.findViewById(R.id.account_details_button);
     }
 
     private void updateUI() {
@@ -206,7 +213,7 @@ public class DashboardManager extends Fragment {
                     @Override
                     public void onItemClick(View view, int position) {
                         DashboardEvent event = mRecentEventsAdapter.getData().get(position);
-                        String tab = null;
+                        String tab = HouseMainActivity.TAB_DASHBOARD;
                         switch (event.type) {
                             case EXPENSE:
                                 tab = HouseMainActivity.TAB_EXPENSE;
@@ -231,7 +238,7 @@ public class DashboardManager extends Fragment {
                 new RecyclerItemClickListener(getContext(), mUpcomingRecyclerView, new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
-                        DashboardEvent event = mRecentEventsAdapter.getData().get(position);
+                        DashboardEvent event = mUpcomingEventsAdapter.getData().get(position);
                         String tab = null;
                         switch (event.type) {
                             case EXPENSE:
@@ -252,6 +259,18 @@ public class DashboardManager extends Fragment {
                     }
                 })
         );
+
+        mAccountButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String userName = ParseUser.getCurrentUser().getUsername();
+                ((HouseMainActivity) getActivity()).changeFragments(
+                        HouseMainActivity.TAB_DASHBOARD,
+                        AccountDetails.newInstance(userName),
+                        true, true
+                );
+            }
+        });
     }
 
 }
