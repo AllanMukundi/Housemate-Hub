@@ -31,6 +31,7 @@ import com.google.gson.reflect.TypeToken;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import org.json.JSONArray;
@@ -280,6 +281,7 @@ public class ExpenseDialog extends DialogFragment implements AdapterView.OnItemS
                             expenseEntry.put("expenseAmount", expense.total);
                             expenseEntry.put("expenseDate", expense.date);
                             expenseEntry.put("division", jsonArray);
+                            expenseEntry.put("owner", ParseUser.getCurrentUser().getUsername());
                             expenseEntry.saveInBackground(new SaveCallback() {
                                 @Override
                                 public void done(ParseException e) {
@@ -299,6 +301,7 @@ public class ExpenseDialog extends DialogFragment implements AdapterView.OnItemS
                     editExpense.put("expenseAmount", expense.total);
                     editExpense.put("expenseDate", expense.date);
                     editExpense.put("division", jsonArray);
+                    editExpense.put("owner", ParseUser.getCurrentUser().getUsername());
                     try {
                         editExpense.save();
                     } catch (ParseException e) {

@@ -21,17 +21,17 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.cs446.housematehub.calendar.CalendarManager;
-import com.cs446.housematehub.account.AccountDetails;
 import com.cs446.housematehub.common.NotificationPublisher;
+import com.cs446.housematehub.common.Utils;
 import com.cs446.housematehub.dashboard.DashboardManager;
 import com.cs446.housematehub.expenses.ExpenseManager;
 import com.cs446.housematehub.grouplist.GroupListManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParsePush;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
-import com.parse.ParsePush;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -47,6 +47,7 @@ public class HouseMainActivity extends LoggedInBaseActivity {
     private ParseObject currentHouse;
     private TextView toolbarTitle;
     private ImageButton backButton;
+    private BottomNavigationView bottomNavigation;
 
     public static final String TAB_DASHBOARD = "tab_dashboard";
     public static final String TAB_EXPENSE = "tab_expense";
@@ -80,7 +81,7 @@ public class HouseMainActivity extends LoggedInBaseActivity {
         String houseName = currentUser.get("houseName").toString();
         currentHouse = getCurrentHouse(houseName);
 
-        BottomNavigationView bottomNavigation = findViewById(R.id.navigationView);
+        bottomNavigation = findViewById(R.id.navigationView);
         bottomNavigation.bringToFront();
         bottomNavigation.setSelectedItemId(R.id.nav_home);
 
@@ -93,6 +94,27 @@ public class HouseMainActivity extends LoggedInBaseActivity {
         bottomNavigation.setOnNavigationItemSelectedListener(navListener);
 
         createNotificationChannels(currentUser.getUsername());
+
+        selectedTab(TAB_DASHBOARD);
+    }
+
+    public void switchToTab(String tabId) {
+        View v = null;
+        switch (tabId) {
+            case TAB_DASHBOARD:
+                v = bottomNavigation.findViewById(R.id.nav_home);
+                break;
+            case TAB_EXPENSE:
+                v = bottomNavigation.findViewById(R.id.nav_expenses);
+                break;
+            case TAB_CALENDAR:
+                v = bottomNavigation.findViewById(R.id.nav_calendar);
+                break;
+            case TAB_LIST:
+                v = bottomNavigation.findViewById(R.id.nav_lists);
+                break;
+        }
+        v.performClick();
     }
 
     BottomNavigationView.OnNavigationItemSelectedListener navListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -120,27 +142,26 @@ public class HouseMainActivity extends LoggedInBaseActivity {
         }
     };
 
-    private void selectedTab(String tabId)
-    {
+    public void selectedTab(String tabId) {
         mCurrentTab = tabId;
 
-        if(mStacks.get(tabId).size() == 0){
-            if(tabId.equals(TAB_DASHBOARD)){
-                changeFragments(tabId, new DashboardManager(),true, false);
-            }else if(tabId.equals(TAB_EXPENSE)){
-                changeFragments(tabId, new ExpenseManager(),true, false);
-            }else if(tabId.equals(TAB_CALENDAR)){
-                changeFragments(tabId, new CalendarManager(),true, false);
-            }else if(tabId.equals(TAB_LIST)){
-                changeFragments(tabId, new GroupListManager(),true, false);
+        if (mStacks.get(tabId).size() == 0) {
+            if (tabId.equals(TAB_DASHBOARD)) {
+                changeFragments(tabId, new DashboardManager(), true, false);
+            } else if (tabId.equals(TAB_EXPENSE)) {
+                changeFragments(tabId, new ExpenseManager(), true, false);
+            } else if (tabId.equals(TAB_CALENDAR)) {
+                changeFragments(tabId, new CalendarManager(), true, false);
+            } else if (tabId.equals(TAB_LIST)) {
+                changeFragments(tabId, new GroupListManager(), true, false);
             }
-        }else {
-            changeFragments(tabId, mStacks.get(tabId).lastElement(),false, false);
+        } else {
+            changeFragments(tabId, mStacks.get(tabId).lastElement(), false, false);
         }
     }
 
-    public void changeFragments(String tag, Fragment fragment, boolean shouldAdd, boolean animate){
-        if(shouldAdd) mStacks.get(tag).push(fragment);
+    public void changeFragments(String tag, Fragment fragment, boolean shouldAdd, boolean animate) {
+        if (shouldAdd) mStacks.get(tag).push(fragment);
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction ft = manager.beginTransaction();
         if (shouldAdd && animate) {
@@ -152,7 +173,7 @@ public class HouseMainActivity extends LoggedInBaseActivity {
         ft.commit();
     }
 
-    public void popFragments(){
+    public void popFragments() {
         //Select the second last fragment in current tab's stack..
         Fragment fragment = mStacks.get(mCurrentTab).elementAt(mStacks.get(mCurrentTab).size() - 2);
 
@@ -164,7 +185,7 @@ public class HouseMainActivity extends LoggedInBaseActivity {
 
     @Override
     public void onBackPressed() {
-        if(mStacks.get(mCurrentTab).size() == 1){
+        if (mStacks.get(mCurrentTab).size() == 1) {
             // We are already showing first fragment of current tab, so when back pressed, we will finish this activity..
             finish();
             return;
@@ -257,7 +278,7 @@ public class HouseMainActivity extends LoggedInBaseActivity {
         try {
             data.put("alert", alertText);
             data.put("title", titleText);
-        } catch ( JSONException e) {
+        } catch (JSONException e) {
             // should not happen
             throw new IllegalArgumentException("unexpected parsing error", e);
         }
@@ -274,13 +295,13 @@ public class HouseMainActivity extends LoggedInBaseActivity {
     }
 
     public void scheduleNotification(String alert, String title, long futureInMillis) {
-        Intent notificationIntent = new Intent( this, NotificationPublisher.class );
+        Intent notificationIntent = new Intent(this, NotificationPublisher.class);
         notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ALERT, alert);
         notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_TITLE, title);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast ( this, 0 , notificationIntent , PendingIntent.FLAG_UPDATE_CURRENT );
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE );
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         assert alarmManager != null;
-        alarmManager.set(AlarmManager.RTC_WAKEUP , futureInMillis , pendingIntent);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, futureInMillis, pendingIntent);
     }
 
 }

@@ -26,7 +26,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/black"
             android:textSize="@dimen/account_details_title_text_size"
-            tools:text="Alex G"></TextView>
+            tools:text="Alex G" />
 
         <TextView
             android:id="@+id/email"
