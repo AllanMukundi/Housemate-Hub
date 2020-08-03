@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -75,8 +74,6 @@ public class HouseMainActivity extends LoggedInBaseActivity {
             }
         });
 
-        Spinner spinner = findViewById(R.id.menu);
-        super.initSpinner(spinner);
         currentUser = ParseUser.getCurrentUser();
         String houseName = currentUser.get("houseName").toString();
         currentHouse = getCurrentHouse(houseName);
