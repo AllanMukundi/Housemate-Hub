@@ -24,7 +24,6 @@ import java.util.List;
 
 public class JoinHouseActivity extends LoggedInBaseActivity {
 
-
     private Button joinButton;
 
     // taken from https://stackoverflow.com/questions/33055860/method-to-cast-object-to-jsonobject-or-jsonarray-depending-on-the-object0k

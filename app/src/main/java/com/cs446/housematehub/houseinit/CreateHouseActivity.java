@@ -42,7 +42,6 @@ public class CreateHouseActivity extends LoggedInBaseActivity implements Validat
 
     private Button createHouseButton;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

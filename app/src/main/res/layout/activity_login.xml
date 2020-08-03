@@ -4,23 +4,35 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
     tools:context=".userinit.LoginActivity">
 
-    <include
-        layout="@layout/housematehub_toolbar"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="52dp" />
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:maxWidth="200dp"
+        android:maxHeight="200dp"
+        android:scaleType="fitCenter"
+        android:layout_marginTop="50dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/whitelogo" />
 
     <EditText
         android:id="@+id/userText"
         android:layout_width="305dp"
         android:layout_height="45dp"
-        android:layout_marginTop="172dp"
+        android:layout_marginTop="50dp"
         android:ems="10"
         android:inputType="textPersonName"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/logo" />
 
     <EditText
         android:id="@+id/passwordText"
@@ -29,6 +41,8 @@
         android:layout_marginTop="52dp"
         android:ems="10"
         android:inputType="textPassword"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/userText" />
@@ -39,6 +53,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="12dp"
         android:text="Username"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/userText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.15"
@@ -49,6 +64,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="12dp"
+        android:textColor="@color/white"
         android:text="Password"
         app:layout_constraintBottom_toTopOf="@+id/passwordText"
         app:layout_constraintEnd_toEndOf="parent"
@@ -61,8 +77,8 @@
         android:layout_height="40dp"
         android:layout_marginTop="24dp"
         android:text="Log in"
+        style="@style/AppTheme.LoginButton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/passwordText" />
 
@@ -71,11 +87,11 @@
         android:layout_width="165dp"
         android:onClick="signUpButton"
         android:layout_height="40dp"
+        android:layout_marginTop="10dp"
         android:text="Sign  Up"
-        app:layout_constraintBottom_toBottomOf="parent"
+        style="@style/AppTheme.LoginButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/loginButton"
-        app:layout_constraintVertical_bias="0.038" />
+        app:layout_constraintTop_toBottomOf="@+id/loginButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
