@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.cs446.housematehub.HouseMainActivity;
@@ -43,14 +42,11 @@ public class CreateHouseActivity extends LoggedInBaseActivity implements Validat
 
     private Button createHouseButton;
 
-    private Spinner spinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_house);
-        spinner = findViewById(R.id.menu);
-        super.initSpinner(spinner);
         initView();
         validator = new Validator(this);
         validator.setValidationListener(this);

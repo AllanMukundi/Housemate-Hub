@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Spinner;
 
 import com.cs446.housematehub.LoggedInBaseActivity;
 import com.cs446.housematehub.R;
@@ -15,14 +14,10 @@ public class LoginHouseActivity extends LoggedInBaseActivity {
 
     private Button joinHouse;
 
-    private Spinner spinner;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_house);
-        spinner = findViewById(R.id.menu);
-        super.initSpinner(spinner);
         initView();
     }
 
