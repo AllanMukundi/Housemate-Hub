@@ -27,8 +27,6 @@ import java.util.List;
 
 public class JoinHouseActivity extends LoggedInBaseActivity {
 
-    private Spinner spinner;
-
     private Button joinButton;
 
     // taken from https://stackoverflow.com/questions/33055860/method-to-cast-object-to-jsonobject-or-jsonarray-depending-on-the-object0k
@@ -38,8 +36,6 @@ public class JoinHouseActivity extends LoggedInBaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_join_house);
-        spinner = findViewById(R.id.menu);
-        super.initSpinner(spinner);
         initView();
     }
 

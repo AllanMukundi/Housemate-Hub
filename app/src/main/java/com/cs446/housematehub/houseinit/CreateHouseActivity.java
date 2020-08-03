@@ -43,14 +43,10 @@ public class CreateHouseActivity extends LoggedInBaseActivity implements Validat
 
     private Button createHouseButton;
 
-    private Spinner spinner;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_house);
-        spinner = findViewById(R.id.menu);
-        super.initSpinner(spinner);
         initView();
         validator = new Validator(this);
         validator.setValidationListener(this);

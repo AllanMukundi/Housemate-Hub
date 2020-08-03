@@ -15,14 +15,10 @@ public class LoginHouseActivity extends LoggedInBaseActivity {
 
     private Button joinHouse;
 
-    private Spinner spinner;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_house);
-        spinner = findViewById(R.id.menu);
-        super.initSpinner(spinner);
         initView();
     }
 

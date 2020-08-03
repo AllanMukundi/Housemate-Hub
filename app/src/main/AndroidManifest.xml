@@ -15,19 +15,23 @@
     <application
         android:name=".App"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_housematehub"
         android:label="Housemate Hub"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_housematehub"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".houseinit.JoinHouseActivity"></activity>
-        <activity android:name=".houseinit.CreateHouseActivity" />
-        <activity android:name=".houseinit.LoginHouseActivity" />
+        <activity android:name=".houseinit.JoinHouseActivity"
+            android:windowSoftInputMode="adjustPan" />
+        <activity android:name=".houseinit.CreateHouseActivity"
+            android:windowSoftInputMode="adjustPan" />
+        <activity android:name=".houseinit.LoginHouseActivity"
+            android:windowSoftInputMode="adjustPan" />
         <activity android:name=".LoggedInBaseActivity" />
         <activity android:name=".HouseMainActivity"
             android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".userinit.LoginActivity"
+            android:windowSoftInputMode="adjustPan"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

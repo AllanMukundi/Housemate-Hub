@@ -27,4 +27,9 @@
         <item name="android:layout_marginTop">@dimen/account_details_row_margin_top</item>
     </style>
 
+    <style name="AppTheme.LoginButton" parent="Widget.AppCompat.Button.Colored">
+        <item name="android:background">@drawable/rounded_shape</item>
+        <item name="colorButtonNormal">@color/white</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+    </style>
 </resources>
