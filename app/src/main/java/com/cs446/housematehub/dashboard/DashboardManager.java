@@ -47,6 +47,8 @@ public class DashboardManager extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        ((HouseMainActivity) getActivity()).disableBack();
+        ((HouseMainActivity) getActivity()).setToolbarTitle("Housemate Hub");
         return inflater.inflate(R.layout.fragment_dashboard, container, false);
     }
 
@@ -211,7 +213,7 @@ public class DashboardManager extends Fragment {
                     @Override
                     public void onItemClick(View view, int position) {
                         DashboardEvent event = mRecentEventsAdapter.getData().get(position);
-                        String tab = null;
+                        String tab = HouseMainActivity.TAB_DASHBOARD;
                         switch (event.type) {
                             case EXPENSE:
                                 tab = HouseMainActivity.TAB_EXPENSE;
@@ -236,7 +238,7 @@ public class DashboardManager extends Fragment {
                 new RecyclerItemClickListener(getContext(), mUpcomingRecyclerView, new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
-                        DashboardEvent event = mRecentEventsAdapter.getData().get(position);
+                        DashboardEvent event = mUpcomingEventsAdapter.getData().get(position);
                         String tab = null;
                         switch (event.type) {
                             case EXPENSE:
